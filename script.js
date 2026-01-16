@@ -13,9 +13,19 @@ function initializeApp() {
     document.getElementById('month-select').value = now.getMonth();
     document.getElementById('year-select').value = now.getFullYear();
 
+    // Generate day checkboxes for the current month
+    generateDayCheckboxes();
+
     // Event listeners
     document.getElementById('generate-btn').addEventListener('click', generatePlanner);
     document.getElementById('export-btn').addEventListener('click', exportToPDF);
+    
+    // Day selector event listeners
+    document.getElementById('month-select').addEventListener('change', generateDayCheckboxes);
+    document.getElementById('year-select').addEventListener('change', generateDayCheckboxes);
+    document.getElementById('select-all-btn').addEventListener('click', selectAllDays);
+    document.getElementById('select-none-btn').addEventListener('click', selectNoDays);
+    document.getElementById('select-weekdays-btn').addEventListener('click', selectWeekdaysOnly);
 
     // Generate initial preview
     generatePlanner();
@@ -33,6 +43,69 @@ function populateYearDropdown() {
         if (year === currentYear) option.selected = true;
         yearSelect.appendChild(option);
     }
+}
+
+function generateDayCheckboxes() {
+    const month = parseInt(document.getElementById('month-select').value);
+    const year = parseInt(document.getElementById('year-select').value);
+    const daysInMonth = getDaysInMonth(year, month);
+    const container = document.getElementById('day-checkboxes');
+    
+    container.innerHTML = '';
+    
+    for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day);
+        const dayOfWeek = date.getDay(); // 0 = Sunday
+        const dayName = ['S', 'M', 'T', 'W', 'T', 'F', 'S'][dayOfWeek];
+        const isSunday = dayOfWeek === 0;
+        
+        const wrapper = document.createElement('div');
+        wrapper.className = `day-checkbox ${isSunday ? 'sunday' : ''}`;
+        
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `day-${day}`;
+        checkbox.value = day;
+        checkbox.checked = true; // All days selected by default
+        
+        const label = document.createElement('label');
+        label.htmlFor = `day-${day}`;
+        label.innerHTML = `<span class="day-name">${dayName}</span>${day}`;
+        
+        wrapper.appendChild(checkbox);
+        wrapper.appendChild(label);
+        container.appendChild(wrapper);
+    }
+}
+
+function getSelectedDays() {
+    const checkboxes = document.querySelectorAll('#day-checkboxes input[type="checkbox"]:checked');
+    return Array.from(checkboxes).map(cb => parseInt(cb.value));
+}
+
+function selectAllDays() {
+    document.querySelectorAll('#day-checkboxes input[type="checkbox"]').forEach(cb => {
+        cb.checked = true;
+    });
+}
+
+function selectNoDays() {
+    document.querySelectorAll('#day-checkboxes input[type="checkbox"]').forEach(cb => {
+        cb.checked = false;
+    });
+}
+
+function selectWeekdaysOnly() {
+    const month = parseInt(document.getElementById('month-select').value);
+    const year = parseInt(document.getElementById('year-select').value);
+    
+    document.querySelectorAll('#day-checkboxes input[type="checkbox"]').forEach(cb => {
+        const day = parseInt(cb.value);
+        const date = new Date(year, month, day);
+        const dayOfWeek = date.getDay();
+        // Check if it's a weekday (Monday-Friday = 1-5)
+        cb.checked = dayOfWeek >= 1 && dayOfWeek <= 5;
+    });
 }
 
 // =====================
@@ -324,9 +397,9 @@ function generateRPMPage(day, month, year) {
         dayCircles += `<div class="day-circle ${isActive ? 'active' : ''}">${letter}</div>`;
     });
 
-    // Generate table rows (about 25 rows to fill the page)
+    // Generate table rows to fill the page
     let tableRows = '';
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < 30; i++) {
         tableRows += `
             <div class="table-row">
                 <div class="row-ldp">
@@ -357,18 +430,9 @@ function generateRPMPage(day, month, year) {
             <div class="table-container">
                 <div class="table-header">
                     <div class="col-ldp">
-                        <div>
-                            <div>L</div>
-                            <div class="sub-label">LEVERAGE</div>
-                        </div>
-                        <div>
-                            <div>D</div>
-                            <div class="sub-label">DURATION</div>
-                        </div>
-                        <div>
-                            <div>P</div>
-                            <div class="sub-label">PRIORITY</div>
-                        </div>
+                        <div><div>L</div></div>
+                        <div><div>D</div></div>
+                        <div><div>P</div></div>
                     </div>
                     <div class="col-action">
                         <div class="main-label">MASSIVE ACTION PLAN</div>
@@ -434,25 +498,41 @@ function generatePlanner() {
         // 2. Monthly Calendar
         html += generateMonthlyCalendar(year, month);
 
-        // 3. Weekly Planners (one for each week)
+        // Get selected days and weeks
+        const selectedDays = getSelectedDays();
         const weeks = getWeeksInMonth(year, month);
-        weeks.forEach((week, i) => {
-            html += generateWeeklyPlanner(i + 1, week);
+        
+        // 3. For each week, generate weekly planner (if it has selected days) followed by daily pages
+        weeks.forEach((week, weekIndex) => {
+            // Find which selected days fall in this week
+            const daysInThisWeek = selectedDays.filter(day => {
+                // Check if this day is part of the current week
+                return week.some(weekDay => 
+                    weekDay.day === day && 
+                    weekDay.month === month && 
+                    weekDay.isCurrentMonth
+                );
+            });
+            
+            // Only generate weekly planner if there are selected days in this week
+            if (daysInThisWeek.length > 0) {
+                // Generate weekly planner for this week
+                html += generateWeeklyPlanner(weekIndex + 1, week);
+                
+                // Generate daily pages for selected days in this week (in order)
+                daysInThisWeek.sort((a, b) => a - b);
+                for (const day of daysInThisWeek) {
+                    // Daily Page
+                    html += generateDailyPage(day, month, year);
+
+                    // RPM Page
+                    html += generateRPMPage(day, month, year);
+
+                    // Celebration Page
+                    html += generateCelebrationPage(day, month, year);
+                }
+            }
         });
-
-        // 4. Daily Pages, RPM Pages, and Celebration Pages
-        const daysInMonth = getDaysInMonth(year, month);
-
-        for (let day = 1; day <= daysInMonth; day++) {
-            // Daily Page
-            html += generateDailyPage(day, month, year);
-
-            // RPM Page
-            html += generateRPMPage(day, month, year);
-
-            // Celebration Page
-            html += generateCelebrationPage(day, month, year);
-        }
 
         container.innerHTML = html;
 
@@ -466,12 +546,48 @@ function generatePlanner() {
 // PDF EXPORT
 // =====================
 
-function exportToPDF() {
+// Fix rotated text for html2canvas compatibility
+// html2canvas has issues with writing-mode + transform: rotate(180deg) combination
+function fixRotatedTextForExport(container) {
+    const elementsToFix = [];
+    
+    // Find all elements with vertical writing mode and transforms
+    container.querySelectorAll('*').forEach(el => {
+        const style = window.getComputedStyle(el);
+        const transform = style.transform;
+        const writingMode = style.writingMode;
+        
+        // If element has vertical writing mode with a transform
+        if (writingMode && writingMode.includes('vertical') && transform && transform !== 'none') {
+            elementsToFix.push({
+                element: el,
+                originalTransform: el.style.transform,
+                originalTextOrientation: el.style.textOrientation,
+                originalWritingMode: el.style.writingMode
+            });
+            
+            // Remove the rotation and use upright text orientation
+            el.style.transform = 'none';
+            el.style.textOrientation = 'upright';
+        }
+    });
+    
+    return elementsToFix;
+}
+
+// Restore original styles after export
+function restoreRotatedText(elementsToFix) {
+    elementsToFix.forEach(({ element, originalTransform, originalTextOrientation, originalWritingMode }) => {
+        element.style.transform = originalTransform;
+        element.style.textOrientation = originalTextOrientation;
+        element.style.writingMode = originalWritingMode;
+    });
+}
+
+async function exportToPDF() {
     const month = parseInt(document.getElementById('month-select').value);
     const year = parseInt(document.getElementById('year-select').value);
     const monthName = getMonthName(month);
-
-    const element = document.getElementById('planner-content');
 
     // Show export in progress
     const exportBtn = document.getElementById('export-btn');
@@ -479,30 +595,59 @@ function exportToPDF() {
     exportBtn.textContent = 'Exporting...';
     exportBtn.disabled = true;
 
-    const opt = {
-        margin: 0,
-        filename: `RPM_Monthly_${monthName}_${year}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: {
-            scale: 2,
-            useCORS: true,
-            letterRendering: true
-        },
-        jsPDF: {
+    try {
+        // Get all page elements
+        const pages = document.querySelectorAll('#planner-content .page');
+        
+        // Create jsPDF instance
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
             unit: 'in',
             format: 'letter',
             orientation: 'portrait'
-        },
-        pagebreak: { mode: ['css', 'legacy'] }
-    };
+        });
 
-    html2pdf().set(opt).from(element).save().then(() => {
+        // Process each page individually
+        for (let i = 0; i < pages.length; i++) {
+            const page = pages[i];
+            
+            // Update progress
+            exportBtn.textContent = `Exporting ${i + 1}/${pages.length}...`;
+
+            // Fix rotated text before rendering
+            const fixedElements = fixRotatedTextForExport(page);
+            
+            // Render the page to canvas
+            const canvas = await html2canvas(page, {
+                scale: 2,
+                useCORS: true,
+                letterRendering: true,
+                width: page.offsetWidth,
+                height: page.offsetHeight
+            });
+            
+            // Restore original styles
+            restoreRotatedText(fixedElements);
+
+            // Add new page if not the first
+            if (i > 0) {
+                pdf.addPage();
+            }
+
+            // Add the canvas as an image, filling the entire PDF page
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+            pdf.addImage(imgData, 'JPEG', 0, 0, 8.5, 11);
+        }
+
+        // Save the PDF
+        pdf.save(`RPM_Monthly_${monthName}_${year}.pdf`);
+        
         exportBtn.textContent = originalText;
         exportBtn.disabled = false;
-    }).catch(err => {
+    } catch (err) {
         console.error('PDF export failed:', err);
         exportBtn.textContent = originalText;
         exportBtn.disabled = false;
         alert('PDF export failed. Please try again.');
-    });
+    }
 }
