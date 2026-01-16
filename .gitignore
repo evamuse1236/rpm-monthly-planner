@@ -1,0 +1,26 @@
+# Reference images (not part of the app)
+RPM Monthly/
+projects/
+
+# Dependencies
+node_modules/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Playwright
+.playwright-mcp/
+
+# Generated PDFs
+*.pdf
+
+# Temporary files
+*.tmp
+*.log

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPM Monthly Planner Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- html2pdf.js for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <!-- Control Panel -->
+    <div class="controls">
+        <h1>RPM Monthly Planner Generator</h1>
+        <div class="selector-group">
+            <label for="month-select">Month:</label>
+            <select id="month-select">
+                <option value="0">January</option>
+                <option value="1">February</option>
+                <option value="2">March</option>
+                <option value="3">April</option>
+                <option value="4">May</option>
+                <option value="5">June</option>
+                <option value="6">July</option>
+                <option value="7">August</option>
+                <option value="8">September</option>
+                <option value="9" selected>October</option>
+                <option value="10">November</option>
+                <option value="11">December</option>
+            </select>
+
+            <label for="year-select">Year:</label>
+            <select id="year-select"></select>
+
+            <button id="generate-btn">Generate Preview</button>
+            <button id="export-btn">Export PDF</button>
+        </div>
+        <p class="hint">Select a month and year, then click Generate Preview. Export to PDF when ready.</p>
+    </div>
+
+    <!-- Preview Container -->
+    <div id="preview-container">
+        <div id="planner-content">
+            <!-- Pages will be generated here -->
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
