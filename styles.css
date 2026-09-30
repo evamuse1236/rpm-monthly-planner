@@ -1,49 +1,113 @@
 /* =====================================================
-   RPM MONTHLY PLANNER - PREMIUM EDITORIAL DESIGN
-   Typography: Libre Baskerville + DM Sans
-   Palette: Future Dusk (Cream, Deep Blue-Purple, Celestial)
+   RPM MONTHLY PLANNER — HANDMADE JOURNAL (B/W LASER EDITION)
+   White paper · one black pen · graphite greys · pencil hatching
+   Type: Caveat (handwriting) · Patrick Hand (neat hand print)
+
+   PRINT CONTRACT (a cheap grayscale laser, not a proofer):
+   1. Structural lines are SOLID BLACK and thin — exactly two weights,
+      1px primary and 0.75px for small outlines. A 27%-grey rule gets
+      halftoned into broken speckle by cheap drivers. Lightness comes
+      from thinness, never from tint.
+   2. Grey is reserved for TEXT TIERS only (ink / soft / faint).
+   3. Backing tints under 10% are treated as decoration that may
+      vanish; no information ever depends on them.
+   4. Hatching means exactly ONE thing: weekend. It never covers a
+      field you write in — it sits as a strip along one edge.
+
+   EXPORT CONTRACT (html2canvas 1.4.1 rasterises this for the PDF):
+   - No absolutely-positioned inline <svg>, no negative z-index.
+   - No 4-value background-position ("right 14px bottom 12px") and
+     no calc() in background-position — both crash the exporter in
+     getAbsoluteValueForTuple and abort the whole PDF. Edge offsets
+     are baked into each SVG's viewBox as transparent padding, then
+     anchored with a plain "100% 100%".
+   - Background SVGs carry explicit width/height; viewBox-only tiles
+     rasterise as specks.
    ===================================================== */
 
-/* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Patrick+Hand&display=swap');
 
-/* CSS Variables - Future Dusk Palette */
 :root {
-    /* Backgrounds */
-    --bg-cream: #FCFBF4;
-    --bg-warm: #F5F2EB;
-    --bg-paper: #FAF9F6;
-    --bg-soft-pink: #F8F0ED;
-    --bg-soft-sage: #EEF2EC;
+    /* ---- paper & ink: pure neutrals, no hue anywhere ---- */
+    --paper: #FFFFFF;
+    --ink: #1A1A1A;         /* pen — headings, data, emphasis  */
+    --ink-soft: #565656;    /* pencil — labels, secondary text */
+    --ink-faint: #8C8C8C;   /* light pencil — captions, folios */
 
-    /* Text - darkened for better readability */
-    --text-primary: #2D3142;
-    --text-secondary: #4C5578;
-    --text-muted: #6B7186;
-    --text-accent: #1A1F2E;
+    /* Structural line colour is SOLID; thickness carries the hierarchy, and
+       there are exactly TWO weights in the whole document:
+         --lw   1px    primary — every rule you write on, every cell border
+         --lw-2 0.75px secondary — small outlines (ticks, chips, rings)
+       1px is deliberate: a 0.75px rule lands on different subpixel
+       boundaries down a grid, so identical CSS was rendering ~45% effective
+       on the calendar and ~90% on the daily page. An integer width rasterises
+       the same everywhere. */
+    --hairline: #1A1A1A;
+    --lw: 1px;
+    --lw-2: 0.75px;
 
-    /* Accents */
-    --accent-gold: #C9A962;
-    --accent-terracotta: #C17B5E;
-    --accent-sage: #8BA888;
-    --accent-dusty-rose: #C4A4A4;
-    --accent-celestial: #EDEAB1;
+    --hand: 'Caveat', cursive;
+    --print: 'Patrick Hand', cursive;
 
-    /* Lines & Borders - slightly darker for visibility */
-    --line-faint: rgba(45, 49, 66, 0.15);
-    --line-subtle: rgba(45, 49, 66, 0.25);
-    --line-medium: rgba(45, 49, 66, 0.35);
+    /* ---- WEEKEND HATCH ----
+       36px tile, three pencil passes at pitch 12. Each pass has its own
+       weight and its own slight bow, and the middle one is drawn as two
+       strokes with a gap where the hand lifted — so tiled lines are never
+       a dead-even 45° machine grid. Endpoints sit on the tile edges so it
+       still tiles seamlessly. Solid black: sparse strokes always print. */
+    --hatch: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'%3E%3Cg fill='none' stroke='%231A1A1A' stroke-linecap='round'%3E%3Cpath d='M0 12 Q6 5.1 12 0' stroke-width='0.5'/%3E%3Cpath d='M12 36 Q24 23.1 36 12' stroke-width='0.5'/%3E%3Cpath d='M0 24 Q9 15.2 15.8 8.4' stroke-width='0.85'/%3E%3Cpath d='M18.4 5.7 L24 0' stroke-width='0.85'/%3E%3Cpath d='M24 36 Q30 31.2 36 24' stroke-width='0.85'/%3E%3Cpath d='M0 36 Q18 19.4 36 0' stroke-width='0.62'/%3E%3C/g%3E%3C/svg%3E");
+    /* mirrored — saturday leans one way, sunday the other */
+    --hatch-alt: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'%3E%3Cg transform='translate(36,0) scale(-1,1)' fill='none' stroke='%231A1A1A' stroke-linecap='round'%3E%3Cpath d='M0 12 Q6 5.1 12 0' stroke-width='0.5'/%3E%3Cpath d='M12 36 Q24 23.1 36 12' stroke-width='0.5'/%3E%3Cpath d='M0 24 Q9 15.2 15.8 8.4' stroke-width='0.85'/%3E%3Cpath d='M18.4 5.7 L24 0' stroke-width='0.85'/%3E%3Cpath d='M24 36 Q30 31.2 36 24' stroke-width='0.85'/%3E%3Cpath d='M0 36 Q18 19.4 36 0' stroke-width='0.62'/%3E%3C/g%3E%3C/svg%3E");
 
-    /* Shadows */
-    --shadow-soft: 0 4px 20px rgba(76, 85, 120, 0.08);
-    --shadow-page: 0 8px 40px rgba(76, 85, 120, 0.12), 0 2px 8px rgba(76, 85, 120, 0.06);
+    /* ---- WASHI TAPE ----
+       Deliberately NOT hatched, so hatch keeps one meaning. Tape reads as
+       paper fibre (uneven vertical strokes) with torn ends: the ends are
+       white wedges painted over the tape, which works because the sheet
+       underneath is pure white. */
+    --fibre: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='9' viewBox='0 0 11 9'%3E%3Cg stroke='%231A1A1A' fill='none'%3E%3Cpath d='M2.1 -1 V10' stroke-width='0.45' stroke-opacity='0.55'/%3E%3Cpath d='M6.6 -1 V10' stroke-width='0.35' stroke-opacity='0.3'/%3E%3Cpath d='M9.2 -1 V10' stroke-width='0.3' stroke-opacity='0.42'/%3E%3C/g%3E%3C/svg%3E");
+    --torn-l: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='5' height='22' viewBox='0 0 5 22' preserveAspectRatio='none'%3E%3Cpath d='M0 0 L3.5 0 L1.1 2.7 L4 5.2 L1.4 7.6 L3.4 10.3 L0.9 12.8 L3.9 15.2 L1.2 17.6 L3.2 20 L1.6 22 L0 22 Z' fill='%23FFFFFF'/%3E%3C/svg%3E");
+    --torn-r: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='5' height='22' viewBox='0 0 5 22' preserveAspectRatio='none'%3E%3Cg transform='translate(5,0) scale(-1,1)'%3E%3Cpath d='M0 0 L3.5 0 L1.1 2.7 L4 5.2 L1.4 7.6 L3.4 10.3 L0.9 12.8 L3.9 15.2 L1.2 17.6 L3.2 20 L1.6 22 L0 22 Z' fill='%23FFFFFF'/%3E%3C/g%3E%3C/svg%3E");
+    --tape-fill: rgba(26, 26, 26, 0.085);
 
-    /* Fonts */
-    --font-display: 'Libre Baskerville', Georgia, serif;
-    --font-body: 'DM Sans', -apple-system, sans-serif;
+    /* ---- DIVIDERS: three different hands, so no one motif repeats
+       on every page ---- */
+    --div-wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='8' viewBox='0 0 44 8'%3E%3Cpath d='M0 4.5 Q5.5 1.3 11 4.2 Q16.5 7.3 22 3.9 Q27.5 1.5 33 4.7 Q38.5 7.5 44 4.1' fill='none' stroke='%231A1A1A' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");
+    --div-dashdot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='4' viewBox='0 0 26 4'%3E%3Cg stroke='%231A1A1A' stroke-width='1.1' stroke-linecap='round' fill='none'%3E%3Cpath d='M0 2.1 L12.4 1.8'/%3E%3Cpath d='M17.6 2.2 h0.01'/%3E%3Cpath d='M22.3 1.9 h0.01'/%3E%3C/g%3E%3C/svg%3E");
+    /* both lines bow the SAME way and sit further apart — when they bowed
+       toward each other they converged mid-span into a lens and read as a
+       rendering artefact rather than a deliberate double rule */
+    --div-double: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='9' viewBox='0 0 48 9'%3E%3Cg fill='none' stroke='%231A1A1A' stroke-linecap='round'%3E%3Cpath d='M0 1.8 Q24 1.1 48 1.8' stroke-width='1'/%3E%3Cpath d='M0 7.3 Q24 6.6 48 7.3' stroke-width='0.6'/%3E%3C/g%3E%3C/svg%3E");
+    /* one confident pass of a broad nib — the title rule */
+    --stroke-bold: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='9' viewBox='0 0 60 9' preserveAspectRatio='none'%3E%3Cpath d='M1.4 5.8 C13 3.3 27 6.6 40 4.1 C47.5 2.7 54 4.3 58.6 3.6' fill='none' stroke='%231A1A1A' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
+
+    /* ---- HIGHLIGHTER SWIPE (title numeral) ----
+       Drawn at its real 108px size, not a scaled-up 20px tape texture: six
+       broad marker passes with wavy edges (so the long edges of the swipe
+       are irregular, not razor-straight) plus four thin drag lines where the
+       nib caught. The drag lines are near-solid black, so the swipe still
+       has real marks on it after a laser halftones the soft passes away —
+       no large flat screened tint anywhere. */
+    --swipe: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='108' viewBox='0 0 90 108'%3E%3Cg fill='none' stroke='%231A1A1A' stroke-linecap='round'%3E%3Cpath d='M0 30 C22 27 40 33 58 29 C72 26 82 32 90 30' stroke-width='50' stroke-opacity='0.07'/%3E%3Cpath d='M0 60 C20 63 38 57 56 62 C72 65 82 59 90 60' stroke-width='48' stroke-opacity='0.06'/%3E%3Cpath d='M0 84 C18 81 38 87 56 83 C72 80 82 86 90 84' stroke-width='44' stroke-opacity='0.07'/%3E%3Cpath d='M0 24 C20 21 36 27 54 23 C70 20 82 26 90 24' stroke-width='0.85' stroke-opacity='0.34'/%3E%3Cpath d='M0 79 C22 76 40 82 58 78 C72 75 84 81 90 79' stroke-width='0.8' stroke-opacity='0.38'/%3E%3C/g%3E%3C/svg%3E");
+    /* thin single wobbly rule — section underlines */
+    --ul-thin: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='4' viewBox='0 0 52 4'%3E%3Cpath d='M0 2.2 Q13 1.2 26 2.1 Q39 3 52 1.9' fill='none' stroke='%231A1A1A' stroke-width='0.85' stroke-linecap='round'/%3E%3C/svg%3E");
+
+    /* highlighter swipe — decorative only, never load-bearing */
+    --highlight: linear-gradient(transparent 44%,
+        rgba(26, 26, 26, 0.17) 44%,
+        rgba(26, 26, 26, 0.09) 64%,
+        rgba(26, 26, 26, 0.18) 74%,
+        rgba(26, 26, 26, 0.11) 88%,
+        transparent 88%);
+
+    /* bullet-journal dot grid — solid black, small, so it survives */
+    --dots: radial-gradient(circle, #1A1A1A 0.75px, transparent 0.8px);
+
+    /* wobbly hand-drawn box radii */
+    --wobble: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    --wobble-2: 15px 225px 15px 255px / 255px 15px 225px 15px;
+    --wobble-s: 12px 5px 14px 6px / 6px 13px 5px 12px;
 }
 
-/* Reset */
 *, *::before, *::after {
     margin: 0;
     padding: 0;
@@ -51,167 +115,158 @@
 }
 
 body {
-    font-family: var(--font-body);
-    background: linear-gradient(180deg, #E8E4DC 0%, #D4CFC4 100%);
+    font-family: var(--print);
+    background: #D5D5D5;
     min-height: 100vh;
-    color: var(--text-primary);
+    color: var(--ink);
     line-height: 1.5;
 }
 
-/* Paper Texture Overlay */
-body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    opacity: 0.03;
-    pointer-events: none;
-    z-index: 1000;
+/* Doodles — pen line art, stroke only. Black outlines are the most
+   laser-safe mark there is, so doodles carry more weight than before. */
+.doodle {
+    width: 18px;
+    height: 18px;
+    vertical-align: -3px;
+    color: var(--ink);
+    flex-shrink: 0;
 }
 
 /* =====================
-   CONTROL PANEL
+   CONTROL PANEL (screen only)
    ===================== */
 .controls {
-    background: var(--bg-cream);
-    padding: 24px 32px;
+    background: var(--paper);
+    padding: 20px 32px 24px;
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: var(--shadow-soft);
-    border-bottom: 1px solid var(--line-subtle);
+    border-bottom: 2px solid var(--ink);
 }
 
 .controls h1 {
-    font-family: var(--font-display);
-    font-size: 20px;
-    font-weight: 400;
-    color: var(--text-primary);
-    letter-spacing: 0.5px;
-    margin-bottom: 16px;
+    font-family: var(--hand);
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 12px;
     text-align: center;
 }
 
 .selector-group {
     display: flex;
-    gap: 16px;
+    gap: 14px;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
 }
 
 .selector-group label {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+    font-family: var(--print);
+    font-size: 14px;
+    color: var(--ink-soft);
 }
 
 .selector-group select {
-    padding: 10px 20px;
-    font-family: var(--font-body);
+    padding: 7px 12px;
+    font-family: var(--print);
     font-size: 14px;
-    border: 1px solid var(--line-medium);
-    border-radius: 6px;
-    background: white;
-    color: var(--text-primary);
+    border: 1.5px solid var(--ink);
+    border-radius: 8px 6px 9px 5px;
+    background: var(--paper);
+    color: var(--ink);
     cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.selector-group select:hover {
-    border-color: var(--accent-gold);
 }
 
 .selector-group select:focus {
     outline: none;
-    border-color: var(--accent-gold);
-    box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.15);
+    border-color: var(--ink);
+    box-shadow: 0 0 0 2px rgba(26, 26, 26, 0.18);
 }
 
 .selector-group button {
-    padding: 12px 28px;
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    border: none;
-    border-radius: 6px;
+    padding: 9px 22px;
+    font-family: var(--hand);
+    font-size: 18px;
+    font-weight: 600;
+    border: 1.5px solid var(--ink);
+    border-radius: var(--wobble);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
 
 #generate-btn {
-    background: var(--text-primary);
-    color: white;
+    background: var(--paper);
+    color: var(--ink);
 }
 
 #generate-btn:hover {
-    background: var(--text-accent);
-    transform: translateY(-1px);
+    background: var(--ink);
+    color: var(--paper);
+    transform: rotate(-1deg);
 }
 
 #export-btn {
-    background: var(--accent-terracotta);
-    color: white;
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fff;
 }
 
 #export-btn:hover {
-    background: #A86B4E;
-    transform: translateY(-1px);
+    background: #000;
+    transform: rotate(1deg);
 }
 
-/* Day Selector */
+/* Day selector */
 .day-selector {
-    margin-top: 20px;
-    padding-top: 16px;
-    border-top: 1px solid var(--line-subtle);
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1.5px dashed var(--ink-faint);
 }
 
 .day-selector-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     flex-wrap: wrap;
     gap: 10px;
+    max-width: 460px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .day-selector-header label {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+    font-family: var(--print);
+    font-size: 14px;
+    color: var(--ink-soft);
 }
 
 .day-selector-actions {
     display: flex;
-    gap: 8px;
+    gap: 6px;
 }
 
 .day-selector-actions button {
-    padding: 6px 12px;
-    font-size: 11px;
-    background: var(--bg-paper);
-    border: 1px solid var(--line-medium);
-    border-radius: 4px;
+    padding: 4px 12px;
+    font-family: var(--print);
+    font-size: 12px;
+    background: var(--paper);
+    border: 1.5px solid var(--ink-faint);
+    border-radius: 7px 5px 8px 6px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    color: var(--ink-soft);
 }
 
 .day-selector-actions button:hover {
-    background: var(--bg-warm);
-    border-color: var(--accent-gold);
+    border-color: var(--ink);
+    color: var(--ink);
 }
 
 .day-checkboxes {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
-    max-width: 500px;
+    gap: 4px;
+    max-width: 460px;
     margin: 0 auto;
 }
 
@@ -230,61 +285,55 @@ body::before {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
-    border: 2px solid var(--line-subtle);
-    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    border: 1.5px solid var(--ink-faint);
+    border-radius: 9px 6px 10px 5px;
     cursor: pointer;
-    transition: all 0.2s ease;
-    font-family: var(--font-body);
+    font-family: var(--print);
     font-size: 14px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    background: white;
+    color: var(--ink-soft);
+    background: var(--paper);
 }
 
 .day-checkbox label .day-name {
     font-size: 8px;
-    font-weight: 400;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    color: var(--ink-faint);
 }
 
 .day-checkbox input[type="checkbox"]:checked + label {
-    background: var(--text-primary);
-    border-color: var(--text-primary);
-    color: white;
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
 }
 
 .day-checkbox input[type="checkbox"]:checked + label .day-name {
-    color: rgba(255, 255, 255, 0.7);
-}
-
-.day-checkbox label:hover {
-    border-color: var(--accent-gold);
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .day-checkbox.sunday label {
-    color: var(--accent-terracotta);
+    color: var(--ink);
+    border-style: dashed;
+    border-color: var(--ink-soft);
 }
 
 .day-checkbox.sunday input[type="checkbox"]:checked + label {
-    background: var(--accent-terracotta);
-    border-color: var(--accent-terracotta);
-    color: white;
+    background: var(--ink-soft);
+    border-color: var(--ink-soft);
+    border-style: dashed;
+    color: #fff;
 }
 
 .hint {
     margin-top: 12px;
-    font-size: 12px;
-    color: var(--text-muted);
+    font-family: var(--hand);
+    font-size: 16px;
+    color: var(--ink-faint);
     text-align: center;
-    font-style: italic;
 }
 
 /* =====================
-   PREVIEW CONTAINER
+   PREVIEW
    ===================== */
 #preview-container {
     padding: 40px 20px;
@@ -295,153 +344,409 @@ body::before {
 #planner-content {
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 28px;
     align-items: center;
 }
 
 /* =====================
-   BASE PAGE STYLES
+   PAGE BASE — 8.5 × 11 in
+   Bottom margin is 0.5in: 0.29in sat inside the non-printable band of
+   several cheap lasers and the folio was getting clipped.
    ===================== */
 .page {
     width: 8.5in;
     height: 11in;
-    background: var(--bg-cream);
-    box-shadow: var(--shadow-page);
+    background: var(--paper);
+    box-shadow: 0 2px 24px rgba(0, 0, 0, 0.20);
     position: relative;
     overflow: hidden;
     page-break-after: always;
     page-break-inside: avoid;
+    font-family: var(--print);
+    /* the greys and textures ARE the design — don't let the browser
+       helpfully strip backgrounds when printing straight from the page */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
 }
 
-/* Subtle paper texture on pages */
-.page::before {
-    content: '';
+/* ---- page dividers: three hands, assigned per page type ---- */
+.rule-double {
+    height: 8px;
+    background-image: var(--div-wave);
+    background-repeat: repeat-x;
+    background-position: left center;
+}
+
+.weekly-planner .rule-double,
+.celebration-page .rule-double {
+    height: 4px;
+    background-image: var(--div-dashdot);
+}
+
+.daily-page .rule-double {
+    height: 9px;
+    background-image: var(--div-double);
+}
+
+/* Shared page header */
+.ledger-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 8px;
+}
+
+/* ---- washi-tape label ----
+   fibre texture + torn ends. Rotation is varied per page below so the
+   tags don't look like the same die-cut sticker five times. */
+.lh-eyebrow,
+.tp-eyebrow {
+    display: inline-block;
+    align-self: flex-start;
+    font-family: var(--print);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    background-color: var(--tape-fill);
+    background-image: var(--torn-l), var(--torn-r), var(--fibre);
+    background-repeat: no-repeat, no-repeat, repeat;
+    background-position: 0 0, 100% 0, 0 0;
+    background-size: 5px 100%, 5px 100%, auto;
+    padding: 2px 15px 3px;
+    margin-bottom: 8px;
+    margin-left: -4px;
+    transform: rotate(-1.6deg);
+}
+
+/* per-page rotation variance — nothing is stuck at a machine angle */
+.monthly-calendar .lh-eyebrow { transform: rotate(-2.1deg); }
+.weekly-planner  .lh-eyebrow { transform: rotate(1.3deg); }
+.daily-page      .lh-eyebrow { transform: rotate(-0.9deg); }
+.rpm-page        .lh-eyebrow { transform: rotate(1.8deg); }
+.celebration-page .lh-eyebrow { transform: rotate(-1.4deg); }
+
+.lh-title {
+    font-family: var(--hand);
+    font-size: 46px;
+    font-weight: 700;
+    line-height: 0.9;
+    color: var(--ink);
+}
+
+.lh-title .lh-doodle {
+    width: 26px;
+    height: 26px;
+    vertical-align: 4px;
+    color: var(--ink);
+}
+
+.lh-title .lh-doodle.small {
+    width: 16px;
+    height: 16px;
+    vertical-align: 14px;
+    margin-left: -4px;
+}
+
+.lh-right {
+    text-align: right;
+}
+
+.lh-mono {
+    font-family: var(--hand);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1;
+}
+
+.lh-sub {
+    font-family: var(--print);
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-top: 3px;
+}
+
+/* Shared page footer */
+.page-foot {
     position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    opacity: 0.025;
-    pointer-events: none;
+    left: 48px;
+    right: 48px;
+    bottom: 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: var(--lw) dashed var(--hairline);
+    padding-top: 7px;
+}
+
+.pf-quote {
+    font-family: var(--hand);
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--ink-soft);
+}
+
+.pf-doodle {
+    width: 14px;
+    height: 14px;
+    vertical-align: -2px;
+}
+
+.pf-folio {
+    font-family: var(--print);
+    font-size: 10.5px;
+    color: var(--ink-faint);
 }
 
 /* =====================
    TITLE PAGE
    ===================== */
 .title-page {
-    background: linear-gradient(170deg, var(--bg-warm) 0%, var(--bg-cream) 40%, var(--bg-soft-sage) 100%);
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     text-align: center;
-    padding: 60px;
+    padding: 74px 72px 76px;
 }
 
-.title-page .illustration {
-    width: 280px;
-    height: 280px;
-    margin-bottom: 48px;
-    background: linear-gradient(145deg, rgba(139, 168, 136, 0.2) 0%, rgba(201, 169, 98, 0.15) 50%, rgba(193, 123, 94, 0.1) 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    box-shadow: 0 20px 60px rgba(76, 85, 120, 0.1);
-}
-
-.title-page .illustration::before {
-    content: "🏠 🚢 ⛵";
-    font-size: 52px;
-    letter-spacing: 8px;
-    filter: grayscale(20%) contrast(0.9);
-}
-
-.title-page .illustration::after {
-    content: '';
-    position: absolute;
-    inset: -4px;
-    border-radius: 50%;
-    border: 1px solid var(--line-subtle);
-}
-
-.title-page h1 {
-    font-family: var(--font-display);
-    font-size: 32px;
-    font-weight: 400;
-    letter-spacing: 12px;
-    color: var(--text-primary);
-    margin-bottom: 12px;
-    text-transform: uppercase;
-}
-
-.title-page h2 {
-    font-family: var(--font-display);
+.title-page .tp-eyebrow {
+    align-self: center;
     font-size: 14px;
-    font-weight: 400;
-    letter-spacing: 16px;
-    color: var(--text-secondary);
-    text-transform: uppercase;
+    padding: 3px 18px 4px;
+    margin-left: 0;
+    margin-bottom: 0;
+    transform: rotate(-1.8deg);
 }
+
+/* Floating doodles are data-URI backgrounds, not positioned SVGs:
+   html2canvas drops absolutely-positioned inline SVGs but renders CSS
+   background images faithfully. Every position is 2-value; each doodle's
+   distance from the right/bottom edge is baked into its own viewBox as
+   transparent padding (see EXPORT CONTRACT at the top). */
+.title-page .tp-numeral-wrap {
+    position: relative;
+    margin-top: 24px;
+    padding: 26px 100px 12px;
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23565656' stroke-width='1.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg transform='rotate(-12 12 12)'%3E%3Cpath d='M8.1 12.3 C7.9 9.6 9.7 7.6 12.2 7.7 C14.8 7.8 16.4 9.8 16.1 12.4 C15.8 14.7 14 16.2 11.7 16.1 C9.5 16 8.3 14.4 8.1 12.3 Z'/%3E%3Cpath d='M12.1 2.4 V5.2 M11.6 19.1 L11.9 22.3 M2.6 11.4 L5.1 11.7 M19.4 12.2 L22.1 11.8 M4.6 4.4 L6.9 6.5 M17.1 17.6 L19.4 19.2 M19.6 4.6 L17.2 6.9 M6.4 17.2 L4.3 19.5'/%3E%3C/g%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36.8' height='24' viewBox='0 0 36.8 24' fill='none' stroke='%231A1A1A' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg transform='rotate(14 12 12)'%3E%3Cpath d='M12.3 2.9 L14.6 8.8 L20.4 9.2 L15.2 13.4 L17.4 19.9 L11.7 16.1 L6.9 20.1 L8.9 13.2 L3.9 9.1 L9.9 8.5 Z'/%3E%3C/g%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='114' viewBox='0 0 28 114' fill='none' stroke='%236E6E6E' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12.4 3.6 C13.2 8.8 15.4 11.2 20.3 12.1 C15.1 13.1 12.9 15.4 11.8 20.4 C11.1 15.2 8.7 12.8 3.7 11.9 C9.1 11.1 11.4 8.7 12.4 3.6 Z'/%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='77.3333' viewBox='0 0 24 77.3333' fill='none' stroke='%23A2A2A2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg transform='rotate(-18 12 12)'%3E%3Cpath d='M11.8 3.4 L14.4 8.9 L20.2 9.8 L15.1 13.5 L17.5 19.4 L11.9 16.4 L7 19.6 L8.7 13.3 L4.1 9.3 L9.7 8.6 Z'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: 44px 44px, 46px 30px, 28px 114px, 18px 58px;
+    background-position: 12px 18px, 100% 0, 100% 100%, 24px 100%;
+}
+
+.title-page .tp-numeral {
+    font-family: var(--hand);
+    font-size: 260px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--ink);
+    position: relative;
+}
+
+/* Highlighter swipe behind the numeral. Sized to ~58% of the numeral's
+   height, optically centred on the x-height and run well past both sides
+   so it never bisects a bowl. Torn ends, like the tape.
+   (a real element painted before the numeral — html2canvas drops
+   negative z-index pseudo-element layering) */
+.title-page .tp-swipe {
+    position: absolute;
+    left: 64px;
+    right: 64px;
+    top: 31%;
+    height: 108px;
+    /* No background-color: a 3.16in × 1.18in flat 9.5% tint is the biggest
+       screened area on the sheet and halftones to fuzz. The texture below
+       is drawn at this element's real size. */
+    background-image: var(--torn-l), var(--torn-r), var(--swipe);
+    background-repeat: no-repeat, no-repeat, repeat-x;
+    background-position: 0 0, 100% 0, 0 0;
+    background-size: 8px 100%, 8px 100%, 90px 108px;
+    transform: rotate(-1.6deg);
+}
+
+/* one confident stroke, not two hairlines converging into a lens */
+.title-page .tp-rule {
+    width: 132px;
+    height: 9px;
+    background-image: var(--stroke-bold);
+    background-repeat: no-repeat;
+    background-size: 132px 9px;
+    margin-top: 26px;
+}
+
+.title-page .tp-month {
+    font-family: var(--hand);
+    font-size: 62px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-top: 14px;
+    line-height: 1;
+}
+
+.title-page .tp-year {
+    font-family: var(--print);
+    font-size: 15px;
+    letter-spacing: 0.28em;
+    color: var(--ink-soft);
+    margin-top: 8px;
+}
+
+/* ---- month-level RPM block ----
+   The lower third of this page used to be 2.6in of nothing, and the
+   product had no month-level Result / Purpose / Massive Action anywhere.
+   This is the monthly counterpart of the daily master plan. */
+.title-page .tp-plan {
+    width: 452px;
+    margin-top: 46px;
+    text-align: left;
+}
+
+.title-page .tp-plan-head {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    background-image: var(--ul-thin);
+    background-repeat: repeat-x;
+    background-position: left bottom;
+    padding-bottom: 8px;
+}
+
+.title-page .tp-plan-head .tp-plan-step {
+    font-family: var(--print);
+    font-size: 10.5px;
+    color: var(--ink-soft);
+    margin-left: auto;
+}
+
+.title-page .tp-field {
+    margin-top: 12px;
+}
+
+.title-page .tp-field .tp-k {
+    font-family: var(--print);
+    font-size: 11px;
+    color: var(--ink-soft);
+}
+
+.title-page .tp-field .tp-line {
+    height: 32px;
+    border-bottom: var(--lw) solid var(--hairline);
+}
+
+.title-page .tp-map {
+    margin-top: 14px;
+}
+
+.title-page .tp-map .tp-k {
+    font-family: var(--print);
+    font-size: 11px;
+    color: var(--ink-soft);
+}
+
+.title-page .tp-action {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    height: 34px;
+    border-bottom: var(--lw) solid var(--hairline);
+}
+
+.title-page .tp-action .tp-tick {
+    width: 12px;
+    height: 12px;
+    border: var(--lw-2) solid var(--hairline);
+    border-radius: var(--wobble-s);
+    margin-bottom: 5px;
+    flex-shrink: 0;
+}
+
+.title-page .tp-action:nth-child(3) .tp-tick { transform: rotate(-3deg); }
+.title-page .tp-action:nth-child(4) .tp-tick { transform: rotate(2.4deg); }
+.title-page .tp-action:nth-child(5) .tp-tick { transform: rotate(-1.6deg); }
+.title-page .tp-action:nth-child(6) .tp-tick { transform: rotate(3deg); }
 
 /* =====================
    MONTHLY CALENDAR
    ===================== */
 .monthly-calendar {
+    padding: 42px 48px 86px;
     display: flex;
-    padding: 0;
-    background: var(--bg-paper);
-}
-
-.monthly-calendar .month-label {
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    transform: rotate(180deg);
-    font-family: var(--font-display);
-    font-size: 56px;
-    font-weight: 400;
-    letter-spacing: 12px;
-    color: var(--text-primary);
-    padding: 30px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(90deg, var(--bg-warm) 0%, var(--bg-paper) 100%);
+    flex-direction: column;
 }
 
 .monthly-calendar .calendar-grid {
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 24px 24px 24px 12px;
 }
+
+/* week tabs — this grid is transposed (day rows × week columns), so each
+   column is a week and each tab names the weekly spread it belongs to */
+.monthly-calendar .week-tabs {
+    display: flex;
+    margin-top: 14px;
+    align-items: flex-end;
+}
+
+.monthly-calendar .wt-spacer {
+    width: 74px;
+    flex-shrink: 0;
+}
+
+.monthly-calendar .wt-cells {
+    flex: 1;
+    display: flex;
+}
+
+.monthly-calendar .week-tab {
+    flex: 1;
+    text-align: center;
+}
+
+.monthly-calendar .week-tab span {
+    display: inline-block;
+    font-family: var(--hand);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    border: var(--lw-2) solid var(--hairline);
+    border-bottom: none;
+    border-radius: 10px 8px 0 0 / 9px 11px 0 0;
+    padding: 1px 12px 2px;
+}
+
+.monthly-calendar .week-tab:nth-child(odd) span { transform: rotate(-1.1deg); }
+.monthly-calendar .week-tab:nth-child(even) span { transform: rotate(0.9deg); }
 
 .calendar-row {
     display: flex;
     flex: 1;
-    border-bottom: 1px solid var(--line-faint);
+    border-bottom: var(--lw) solid var(--hairline);
 }
 
-.calendar-row:last-child {
-    border-bottom: none;
+.calendar-row:first-child {
+    border-top: var(--lw) solid var(--hairline);
 }
 
 .day-header {
-    width: 80px;
+    width: 74px;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-body);
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 2px;
-    color: var(--text-secondary);
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    text-transform: uppercase;
+    align-items: flex-start;
+    padding-top: 8px;
+    font-family: var(--print);
+    font-size: 12px;
+    color: var(--ink-soft);
 }
 
-.day-header.sunday {
-    color: var(--accent-terracotta);
+/* weekend rows: the day name goes to full ink, and each CELL gets a
+   narrow hatched strip down its left edge. The old full-row wash covered
+   29% of the grid with texture you had to write over, and it ran straight
+   through the cell rules. */
+.calendar-row.weekend .day-header {
+    color: var(--ink);
 }
 
 .calendar-cells {
@@ -451,565 +756,585 @@ body::before {
 
 .calendar-cell {
     flex: 1;
-    border-left: 1px solid var(--line-faint);
-    padding: 8px;
-    min-height: 72px;
+    border-left: var(--lw) solid var(--hairline);
+    padding: 6px 9px;
     position: relative;
-    transition: background 0.2s ease;
 }
 
-.calendar-cell:hover {
-    background: rgba(201, 169, 98, 0.05);
+.calendar-row.weekend .calendar-cell {
+    background-image: var(--hatch);
+    background-repeat: repeat-y;
+    background-position: 0 0;
+    background-size: 15px 15px;
+}
+
+.calendar-row.weekend:first-child .calendar-cell {
+    background-image: var(--hatch-alt);
 }
 
 .calendar-cell .date-number {
-    font-family: var(--font-display);
-    font-size: 14px;
-    color: var(--text-secondary);
-    position: absolute;
-    bottom: 8px;
-    left: 10px;
-}
-
-.calendar-cell .date-number.sunday {
-    color: var(--accent-terracotta);
-    font-weight: 700;
+    font-family: var(--print);
+    font-size: 13px;
+    color: var(--ink);
+    position: relative;
+    padding-left: 9px;
 }
 
 .calendar-cell .date-number.other-month {
-    color: var(--text-muted);
-    opacity: 0.5;
-}
-
-.monthly-calendar .sidebar {
-    width: 48px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    padding: 24px 12px;
-    background: linear-gradient(270deg, var(--bg-warm) 0%, var(--bg-paper) 100%);
-}
-
-.monthly-calendar .star {
-    font-size: 16px;
-    color: var(--accent-gold);
-}
-
-.monthly-calendar .quote {
-    writing-mode: vertical-rl;
-    font-family: var(--font-display);
-    font-size: 9px;
-    font-style: italic;
-    color: var(--text-muted);
-    letter-spacing: 0.5px;
-}
-
-.monthly-calendar .footer-label {
-    writing-mode: vertical-rl;
-    font-family: var(--font-body);
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    letter-spacing: 2px;
-    text-transform: uppercase;
+    color: var(--ink-faint);
 }
 
 /* =====================
    WEEKLY PLANNER
    ===================== */
 .weekly-planner {
+    padding: 42px 48px 86px;
     display: flex;
-    padding: 0;
-    background: var(--bg-cream);
+    flex-direction: column;
 }
 
-.weekly-planner .left-side {
-    width: 56px;
-    background: linear-gradient(90deg, var(--bg-soft-sage) 0%, var(--bg-cream) 100%);
+.weekly-planner .week-body {
+    flex: 1;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    padding: 20px;
+    gap: 26px;
+    margin-top: 16px;
 }
 
-.weekly-planner .floral {
-    position: absolute;
-    top: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 28px;
-    opacity: 0.6;
-    filter: grayscale(30%);
-}
-
-.weekly-planner .vertical-label {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    font-family: var(--font-display);
-    font-size: 11px;
-    letter-spacing: 6px;
-    color: var(--text-secondary);
-    font-weight: 400;
-    text-transform: uppercase;
-}
-
-.weekly-planner .main-content {
+.weekly-planner .weekday-col {
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 24px;
-    gap: 12px;
 }
 
 .weekly-planner .weekday-box {
     flex: 1;
-    border: 1px solid var(--line-subtle);
-    border-radius: 8px;
+    border-bottom: var(--lw) solid var(--hairline);
+    padding: 9px 2px;
     display: flex;
-    background: white;
-    overflow: hidden;
-    transition: box-shadow 0.2s ease;
+    flex-direction: column;
 }
 
-.weekly-planner .weekday-box:hover {
-    box-shadow: 0 2px 12px rgba(76, 85, 120, 0.06);
+.weekly-planner .weekday-box:first-child {
+    padding-top: 10px;
 }
 
 .weekly-planner .weekday-label {
-    width: 64px;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--bg-paper);
-    border-right: 1px solid var(--line-faint);
+    align-items: baseline;
+    gap: 8px;
 }
 
-.weekly-planner .weekday-label span {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    font-family: var(--font-body);
-    font-size: 9px;
-    font-weight: 500;
-    letter-spacing: 2px;
-    color: var(--text-secondary);
-    text-transform: uppercase;
+.weekly-planner .weekday-label .wd-name {
+    font-family: var(--hand);
+    font-size: 21px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1;
 }
 
-.weekly-planner .weekday-content {
-    flex: 1;
-    padding: 12px;
+/* the date used to be coral; now a small hand-drawn chip — an outline
+   shape reads instantly on a B/W print where a colour never would */
+.weekly-planner .weekday-label .wd-date {
+    font-family: var(--print);
+    font-size: 12px;
+    color: var(--ink);
+    border: var(--lw-2) solid var(--hairline);
+    border-radius: 9px 5px 10px 6px / 6px 10px 5px 9px;
+    padding: 0 6px 1px;
+    line-height: 1.35;
+    transform: rotate(-1.2deg);
 }
 
-.weekly-planner .weekend-strip {
-    width: 72px;
+/* each pill gets its own lean AND its own corner shape — five identical
+   pills inside hand-wobbled panels read as stamped UI chips */
+.weekly-planner .weekday-box:nth-child(2) .wd-date {
+    transform: rotate(1.4deg);
+    border-radius: 6px 11px 5px 9px / 10px 6px 11px 5px;
+}
+.weekly-planner .weekday-box:nth-child(3) .wd-date {
+    transform: rotate(-0.5deg);
+    border-radius: 11px 6px 9px 5px / 5px 10px 6px 11px;
+}
+.weekly-planner .weekday-box:nth-child(4) .wd-date {
+    transform: rotate(0.8deg);
+    border-radius: 5px 9px 11px 6px / 11px 5px 9px 6px;
+}
+.weekly-planner .weekday-box:nth-child(5) .wd-date {
+    transform: rotate(-1.7deg);
+    border-radius: 10px 5px 6px 11px / 6px 11px 10px 5px;
+}
+.weekly-planner .weekend-day .wd-date {
+    transform: rotate(1.1deg);
+    border-radius: 7px 12px 6px 10px / 11px 6px 12px 7px;
+}
+.weekly-planner .weekend-day + .weekend-day .wd-date {
+    transform: rotate(-1.9deg);
+    border-radius: 12px 7px 10px 6px / 6px 11px 7px 12px;
+}
+
+.weekly-planner .weekday-label .wd-date.other-month {
+    color: var(--ink-faint);
+    border-style: dashed;
+}
+
+.weekly-planner .weekend-col {
+    width: 172px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding: 24px 12px;
 }
 
+/* Weekend panels: hatch is a ~7mm strip down ONE edge, not a fill. These
+   are the two biggest writing blocks on the page — they have to stay
+   white. Saturday's strip runs down the left and leans one way; sunday's
+   runs down the right and leans the other. Doodles stay CSS backgrounds:
+   html2canvas drops positioned inline SVGs. */
 .weekly-planner .weekend-day {
     flex: 1;
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='39.2727' height='37.0909' viewBox='0 0 39.2727 37.0909' fill='none' stroke='%23565656' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11.8' cy='12.2' r='2'/%3E%3Cpath d='M11.6 3.2 C14.1 3.6 15 5.9 13.6 8.2 C12.9 9.4 11.4 9.9 10.2 9.2 C8.3 8.1 8.9 4.9 11.6 3.2 Z'/%3E%3Cpath d='M19.9 8.4 C21.3 10.6 20.2 12.9 17.5 13.1 C16.1 13.2 15.1 12.1 15.4 10.8 C15.8 8.7 18.2 7.5 19.9 8.4 Z'/%3E%3Cpath d='M17.2 18.9 C15.4 20.7 12.9 20.1 12.4 17.5 C12.2 16.3 13.1 15.3 14.4 15.4 C16.5 15.6 18 17.4 17.2 18.9 Z'/%3E%3Cpath d='M7.4 17.9 C6.4 15.7 7.9 13.9 10.2 14.6 C11.4 15 11.9 16.3 11.2 17.4 C10.2 19.1 8.2 19.3 7.4 17.9 Z'/%3E%3Cpath d='M4.3 9.6 C6.2 8.1 8.5 9.1 8.6 11.7 C8.7 13 7.6 13.9 6.4 13.5 C4.4 12.9 3.4 10.7 4.3 9.6 Z'/%3E%3C/svg%3E"),
+        var(--hatch);
+    background-repeat: no-repeat, repeat-y;
+    background-position: 100% 100%, 0 0;
+    background-size: 36px 34px, 26px 26px;
+    border: 1.4px solid var(--ink);
+    border-radius: var(--wobble);
+    padding: 12px 16px 14px 34px;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
+    flex-direction: column;
+    position: relative;
 }
 
-.weekly-planner .weekend-day.saturday {
-    background: linear-gradient(180deg, var(--bg-soft-pink) 0%, rgba(248, 240, 237, 0.5) 100%);
-}
-
-.weekly-planner .weekend-day.sunday {
-    background: linear-gradient(180deg, var(--bg-warm) 0%, rgba(245, 242, 235, 0.5) 100%);
-}
-
-.weekly-planner .weekend-day span {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    font-family: var(--font-body);
-    font-size: 9px;
-    font-weight: 500;
-    letter-spacing: 2px;
-    color: var(--text-secondary);
-    text-transform: uppercase;
+.weekly-planner .weekend-day + .weekend-day {
+    margin-top: 18px;
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='39.2727' height='37.0909' viewBox='0 0 39.2727 37.0909' fill='none' stroke='%23565656' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8.2 12.4 C8 9.7 9.8 7.7 12.3 7.8 C14.9 7.9 16.5 9.9 16.2 12.5 C15.9 14.8 14.1 16.3 11.8 16.2 C9.6 16.1 8.4 14.5 8.2 12.4 Z'/%3E%3Cpath d='M12.2 2.5 V5.3 M11.7 19.2 L12 22.4 M2.7 11.5 L5.2 11.8 M19.5 12.3 L22.2 11.9 M4.7 4.5 L7 6.6 M17.2 17.7 L19.5 19.3 M19.7 4.7 L17.3 7 M6.5 17.3 L4.4 19.6'/%3E%3C/svg%3E"),
+        var(--hatch-alt);
+    background-position: 100% 100%, 100% 0;
+    border-radius: var(--wobble-2);
+    padding: 12px 34px 14px 16px;
 }
 
 /* =====================
    DAILY PAGE
    ===================== */
 .daily-page {
-    padding: 28px 32px;
-    font-family: var(--font-body);
-    background: var(--bg-cream);
+    padding: 42px 48px 86px;
+    display: flex;
+    flex-direction: column;
 }
 
-.daily-page .header {
+.daily-page .dp-head {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 16px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--line-subtle);
+    align-items: flex-end;
+    padding-bottom: 8px;
 }
 
-.daily-page .date-section {
-    display: flex;
-    flex-direction: column;
+.daily-page .dp-date {
+    font-family: var(--hand);
+    font-size: 46px;
+    font-weight: 700;
+    line-height: 0.9;
+    color: var(--ink);
 }
 
-.daily-page .date-label {
-    font-size: 10px;
+.daily-page .dp-daybox {
+    font-family: var(--hand);
+    font-size: 24px;
     font-weight: 600;
-    letter-spacing: 2px;
-    color: var(--text-secondary);
-    text-transform: uppercase;
+    color: var(--ink);
+    border: 1.2px solid var(--ink);
+    border-radius: var(--wobble);
+    padding: 4px 22px 6px;
+    transform: rotate(1.2deg);
 }
 
-.daily-page .date-value {
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 400;
-    color: var(--text-primary);
-    margin-top: 4px;
-}
-
-.daily-page .five-steps {
-    font-size: 9px;
-    color: var(--text-secondary);
-    max-width: 420px;
-    line-height: 1.6;
-    font-style: italic;
-    text-align: center;
-    padding: 0 20px;
-}
-
-.daily-page .day-box {
-    border: 2px solid var(--text-primary);
-    padding: 10px 20px;
-    font-family: var(--font-display);
-    font-size: 14px;
-    font-weight: 400;
-    color: var(--text-primary);
-    letter-spacing: 1px;
-}
-
-.daily-page .main-content {
-    display: flex;
-    gap: 24px;
-    height: calc(100% - 90px);
-}
-
-.daily-page .schedule-section {
+.daily-page .dp-body {
     flex: 1;
     display: flex;
-    flex-direction: column;
+    gap: 32px;
+    margin-top: 18px;
+    min-height: 0;
 }
 
-.daily-page .section-header {
+/* Section headers */
+.sec-head {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
+    gap: 8px;
+    background-image: var(--ul-thin);
+    background-repeat: repeat-x;
+    background-position: left bottom;
+    padding-bottom: 9px;
 }
 
-.daily-page .section-icon {
-    font-size: 14px;
-    filter: grayscale(30%);
+.sec-doodle {
+    width: 19px;
+    height: 19px;
+    color: var(--ink-soft);
 }
 
-.daily-page .section-title {
-    font-family: var(--font-display);
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--text-primary);
+/* highlighter behind a heading — torn ends, matching every other taped
+   element, so no swipe on the sheet stops with a razor-straight edge */
+.sec-title,
+.title-page .tp-plan-head .tp-plan-title {
+    font-family: var(--hand);
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--ink);
+    background-image: var(--torn-l), var(--torn-r), var(--highlight);
+    background-repeat: no-repeat, no-repeat, repeat;
+    background-position: 0 0, 100% 0, 0 0;
+    background-size: 4px 100%, 4px 100%, auto;
+    padding: 0 5px;
 }
 
-.daily-page .section-subtitle {
-    font-size: 10px;
-    color: var(--text-secondary);
-    margin-left: 24px;
-    margin-top: -4px;
-    margin-bottom: 12px;
-    font-style: italic;
+.sec-step {
+    font-family: var(--print);
+    font-size: 10.5px;
+    color: var(--ink-soft);
+    margin-left: auto;
+}
+
+.sec-sub {
+    font-family: var(--print);
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    margin-top: 6px;
+}
+
+/* Schedule column */
+.daily-page .schedule-section {
+    flex: 11;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 .daily-page .schedule-box {
-    border: 1px solid var(--line-subtle);
-    border-radius: 12px;
-    padding: 12px 16px;
     flex: 1;
-    background: white;
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    min-height: 0;
 }
 
 .daily-page .time-slot {
+    flex: 1;
     display: flex;
-    align-items: center;
-    height: 38px;
-    border-bottom: 1px solid var(--line-faint);
+    align-items: flex-end;
+    border-bottom: var(--lw) solid var(--hairline);
+}
+
+.daily-page .time-slot .time-label {
+    width: 52px;
+    font-family: var(--print);
+    font-size: 11px;
+    color: var(--ink-soft);
+    padding-bottom: 3px;
+}
+
+/* the anchor hours (noon, 6pm) stand out by weight, not colour */
+.daily-page .time-slot.highlight .time-label {
+    color: var(--ink);
 }
 
 .daily-page .time-slot.highlight {
-    border-bottom: 1.5px dashed var(--line-medium);
+    border-bottom: 1.2px dashed var(--hairline);
 }
 
-.daily-page .time-label {
-    width: 52px;
-    font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-secondary);
-}
-
+/* Capture column */
 .daily-page .capture-section {
-    width: 260px;
+    flex: 9;
     display: flex;
     flex-direction: column;
+    min-height: 0;
 }
 
 .daily-page .capture-box {
-    border: 1px solid var(--line-subtle);
-    border-radius: 12px;
-    padding: 16px;
     flex: 1;
-    margin-bottom: 16px;
-    background: white;
+    margin-top: 10px;
+    background-image: var(--dots);
+    background-size: 16px 16px;
+    background-position: 0 0;
+    min-height: 0;
 }
 
 .daily-page .comms-section {
-    margin-top: auto;
-}
-
-.daily-page .comms-title {
-    font-family: var(--font-display);
-    font-size: 11px;
-    font-weight: 600;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: var(--text-primary);
+    margin-top: 16px;
 }
 
 .daily-page .comms-line {
-    height: 28px;
-    border: 1px solid var(--line-subtle);
-    border-radius: 20px;
-    margin-bottom: 8px;
-    background: white;
+    height: 26px;
+    border-bottom: var(--lw) solid var(--hairline);
 }
 
 .daily-page .wellness-section {
     margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid var(--line-faint);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .daily-page .wellness-item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
-    font-family: var(--font-display);
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text-primary);
+    gap: 9px;
+    font-family: var(--print);
+    font-size: 13px;
+    color: var(--ink);
+}
+
+.daily-page .wellness-item .checkbox {
+    width: 13px;
+    height: 13px;
+    border: var(--lw-2) solid var(--ink);
+    border-radius: var(--wobble-s);
+    flex-shrink: 0;
+    transform: rotate(-2deg);
+}
+
+.daily-page .wellness-item:nth-child(2) .checkbox { transform: rotate(2.6deg); }
+.daily-page .wellness-item:nth-child(3) .checkbox { transform: rotate(-1.2deg); }
+
+.wi-doodle {
+    width: 15px;
+    height: 15px;
+    color: var(--ink-soft);
+}
+
+/* Five master steps footer — the steps this page covers are inked, the
+   rest stay faint, so the breadcrumb says where you are */
+.daily-page .steps-foot {
+    position: absolute;
+    left: 48px;
+    right: 48px;
+    bottom: 48px;
+    display: flex;
+    justify-content: space-between;
+    border-top: var(--lw) dashed var(--hairline);
+    padding-top: 7px;
+    font-family: var(--print);
+    font-size: 10.5px;
+    color: var(--ink-faint);
+}
+
+.daily-page .steps-foot .sf-num {
+    font-family: var(--hand);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink-faint);
+    margin-right: 4px;
+}
+
+.daily-page .steps-foot .sf-on {
+    color: var(--ink);
+}
+
+.daily-page .steps-foot .sf-on .sf-num {
+    color: var(--ink);
 }
 
 /* =====================
-   RPM PAGE
+   RPM PAGE — master plan
+   Single full-page table: L/D/P tick columns on the left, then massive
+   action plan / result / purpose. Restored at the user's request over the
+   three-block version. Carried into the current B/W system: solid-black
+   hairlines at the two standard weights, the wave divider, and the
+   torn-end highlighter behind the handwritten column heads.
    ===================== */
 .rpm-page {
-    padding: 24px 28px;
+    padding: 42px 48px 86px;
     display: flex;
     flex-direction: column;
-    background: var(--bg-paper);
 }
 
-.rpm-page .header {
+.rpm-page .lh-right {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--line-subtle);
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
 }
 
 .rpm-page .day-circles {
     display: flex;
-    gap: 6px;
+    gap: 5px;
 }
 
 .rpm-page .day-circle {
-    width: 26px;
-    height: 26px;
-    border: 1.5px solid var(--text-secondary);
-    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    border: var(--lw-2) solid var(--ink-faint);
+    border-radius: 52% 48% 55% 45% / 48% 55% 45% 52%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: var(--font-body);
-    font-size: 9px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    transition: all 0.2s ease;
+    font-family: var(--print);
+    font-size: 11px;
+    color: var(--ink-faint);
+    position: relative;
+}
+
+.rpm-page .day-circle:nth-child(even) {
+    border-radius: 47% 53% 44% 56% / 55% 45% 54% 46%;
 }
 
 .rpm-page .day-circle.active {
-    background: var(--text-primary);
-    border-color: var(--text-primary);
-    color: white;
+    border: 1.2px solid var(--ink);
+    color: var(--ink);
+    transform: rotate(-4deg);
 }
 
-.rpm-page .date-section {
-    font-family: var(--font-body);
+/* The outer ring is a real ::after with a border, NOT a box-shadow:
+   html2canvas 1.4.1 does not render box-shadow, so a shadow ring
+   collapses to a single ring in the exported PDF and the "today" marker
+   effectively disappears. Positive-inset pseudo, no negative z-index. */
+.rpm-page .day-circle.active::after {
+    content: '';
+    position: absolute;
+    top: -3.5px;
+    right: -3.5px;
+    bottom: -3.5px;
+    left: -3.5px;
+    border: 1.2px solid var(--ink);
+    border-radius: 49% 51% 46% 54% / 53% 47% 52% 48%;
+}
+
+.rpm-page .rp-date {
+    font-family: var(--print);
+    font-size: 13px;
+    color: var(--ink);
+}
+
+.rpm-page .rp-date span {
     font-size: 11px;
-    color: var(--text-secondary);
-}
-
-.rpm-page .date-section span {
-    font-weight: 500;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-right: 8px;
+    color: var(--ink-faint);
+    margin-right: 7px;
 }
 
 .rpm-page .incantation {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 12px;
-    flex: 1;
-    max-width: 300px;
-}
-
-.rpm-page .incantation-icon {
-    font-size: 18px;
-    filter: grayscale(20%);
+    margin-top: 12px;
 }
 
 .rpm-page .incantation-label {
-    font-family: var(--font-body);
-    font-size: 10px;
+    font-family: var(--hand);
+    font-size: 20px;
     font-weight: 600;
-    letter-spacing: 2px;
-    color: var(--text-secondary);
-    text-transform: uppercase;
+    color: var(--ink);
+    white-space: nowrap;
 }
 
 .rpm-page .incantation-line {
     flex: 1;
-    border-bottom: 1px solid var(--line-medium);
+    border-bottom: var(--lw) solid var(--hairline);
+}
+
+/* spelled-out key — "L D P" alone is undecodable */
+.rpm-page .ldp-key {
+    font-family: var(--print);
+    font-size: 10px;
+    color: var(--ink-faint);
+    margin-top: 5px;
+    letter-spacing: 0.02em;
 }
 
 .rpm-page .table-container {
     flex: 1;
     display: flex;
     flex-direction: column;
+    margin-top: 16px;
+    min-height: 0;
 }
 
 .rpm-page .table-header {
     display: flex;
-    border-bottom: 2px solid var(--line-medium);
-    padding-bottom: 10px;
-    margin-bottom: 4px;
+    align-items: flex-end;
+    padding-bottom: 7px;
 }
 
 .rpm-page .col-ldp {
-    width: 84px;
+    width: 72px;
     display: flex;
 }
 
 .rpm-page .col-ldp > div {
     flex: 1;
     text-align: center;
-}
-
-.rpm-page .col-ldp > div > div:first-child {
-    font-family: var(--font-display);
-    font-size: 12px;
+    font-family: var(--hand);
+    font-size: 17px;
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--ink);
 }
 
-.rpm-page .col-ldp .sub-label {
-    font-family: var(--font-body);
-    font-size: 6px;
-    font-weight: 500;
-    color: var(--text-muted);
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    letter-spacing: 1px;
-    text-transform: uppercase;
+.rpm-page .col-action { flex: 2; }
+.rpm-page .col-result { flex: 1; }
+.rpm-page .col-purpose { flex: 1; }
+
+.rpm-page .col-action,
+.rpm-page .col-result,
+.rpm-page .col-purpose {
+    text-align: left;
+    padding-left: 12px;
 }
 
-.rpm-page .col-action {
-    flex: 2;
-    text-align: center;
+/* handwritten head on a torn-end highlighter swipe, matching every other
+   taped element in the document */
+.rpm-page .main-label {
+    font-family: var(--hand);
+    font-size: 21px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--ink);
+    display: inline-block;
+    background-image: var(--torn-l), var(--torn-r), var(--highlight);
+    background-repeat: no-repeat, no-repeat, repeat;
+    background-position: 0 0, 100% 0, 0 0;
+    background-size: 4px 100%, 4px 100%, auto;
+    padding: 0 5px;
 }
 
-.rpm-page .col-action .main-label {
-    font-family: var(--font-display);
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--text-primary);
-    letter-spacing: 0.5px;
-}
-
-.rpm-page .col-action .sub-label {
-    font-family: var(--font-body);
-    font-size: 10px;
-    color: var(--text-secondary);
+.rpm-page .sub-label {
+    font-family: var(--print);
     font-style: italic;
+    font-size: 10.5px;
+    color: var(--ink-soft);
+    margin-top: 4px;
 }
 
-.rpm-page .col-result, .rpm-page .col-purpose {
-    flex: 1;
-    text-align: center;
-}
-
-.rpm-page .col-result .main-label, .rpm-page .col-purpose .main-label {
-    font-family: var(--font-display);
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text-primary);
-}
-
-.rpm-page .col-result .sub-label, .rpm-page .col-purpose .sub-label {
-    font-family: var(--font-body);
-    font-size: 10px;
-    color: var(--text-secondary);
-    font-style: italic;
+.rpm-page .table-rule {
+    height: 8px;
+    background-image: var(--div-wave);
+    background-repeat: repeat-x;
+    background-position: left center;
 }
 
 .rpm-page .table-body {
     flex: 1;
     display: flex;
     flex-direction: column;
+    min-height: 0;
+    margin-top: 2px;
 }
 
 .rpm-page .table-row {
     display: flex;
     flex: 1;
-    border-bottom: 1px solid var(--line-faint);
-}
-
-.rpm-page .table-row:nth-child(odd) {
-    background: rgba(193, 123, 94, 0.03);
+    border-bottom: var(--lw) solid var(--hairline);
 }
 
 .rpm-page .row-ldp {
-    width: 84px;
+    width: 72px;
     display: flex;
-    border-right: 1px solid var(--line-faint);
+    border-right: 1.4px solid var(--hairline);
 }
 
 .rpm-page .row-ldp > div {
     flex: 1;
-    border-right: 1px solid var(--line-faint);
+    border-right: var(--lw-2) solid var(--hairline);
 }
 
 .rpm-page .row-ldp > div:last-child {
@@ -1018,12 +1343,12 @@ body::before {
 
 .rpm-page .row-action {
     flex: 2;
-    border-right: 1px solid var(--line-faint);
+    border-right: var(--lw-2) solid var(--hairline);
 }
 
 .rpm-page .row-result {
     flex: 1;
-    border-right: 1px solid var(--line-faint);
+    border-right: var(--lw-2) solid var(--hairline);
 }
 
 .rpm-page .row-purpose {
@@ -1034,88 +1359,120 @@ body::before {
    CELEBRATION PAGE
    ===================== */
 .celebration-page {
-    background: linear-gradient(175deg, var(--bg-cream) 0%, var(--bg-warm) 40%, var(--bg-soft-sage) 100%);
-    padding: 32px 40px;
-    position: relative;
+    padding: 42px 48px 86px;
+    display: flex;
+    flex-direction: column;
 }
 
-.celebration-page::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 200px;
-    background: linear-gradient(180deg, transparent 0%, rgba(139, 168, 136, 0.08) 50%, rgba(201, 169, 98, 0.06) 100%);
-    pointer-events: none;
+.celebration-page .cp-prompts {
+    margin-top: 16px;
+    display: flex;
+    gap: 26px;
 }
 
-.celebration-page .header {
-    margin-bottom: 24px;
+.celebration-page .cp-prompt {
+    flex: 1;
 }
 
-.celebration-page .header h2 {
-    font-family: var(--font-display);
-    font-size: 12px;
-    font-weight: 400;
-    letter-spacing: 3px;
-    color: var(--text-primary);
-    margin-bottom: 16px;
-    text-transform: uppercase;
+.celebration-page .cp-prompt .cp-q {
+    font-family: var(--hand);
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--ink);
+    background-image: var(--ul-thin);
+    background-repeat: repeat-x;
+    background-position: left bottom;
+    padding-bottom: 9px;
 }
 
-.celebration-page .header p {
-    font-family: var(--font-body);
-    font-size: 10px;
-    color: var(--text-secondary);
-    line-height: 1.8;
-    font-style: italic;
-    max-width: 600px;
+.celebration-page .cp-prompt .cp-line {
+    height: 25px;
+    border-bottom: var(--lw) solid var(--hairline);
 }
 
-.celebration-page .content-area {
-    height: calc(100% - 120px);
-    background: rgba(255, 255, 255, 0.4);
-    border-radius: 12px;
-    position: relative;
-    border: 1px solid var(--line-faint);
+.celebration-page .cp-reflect {
+    flex: 1;
+    margin-top: 22px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
-.celebration-page .date-field {
-    position: absolute;
-    top: 20px;
-    right: 24px;
-    font-family: var(--font-body);
-    font-size: 10px;
-    font-weight: 500;
-    color: var(--text-muted);
-    letter-spacing: 1px;
+.celebration-page .cp-reflect-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    background-image: var(--div-wave);
+    background-repeat: repeat-x;
+    background-position: left bottom;
+    padding-bottom: 11px;
+}
+
+.celebration-page .cp-reflect-label .sec-title {
+    font-size: 24px;
+}
+
+.celebration-page .cp-motto {
+    font-family: var(--hand);
+    font-size: 17px;
+    color: var(--ink-soft);
+}
+
+/* The wins field used to be an open dot-grid running the length of the
+   page, which reads as "unfinished". Now four hand-drawn ticks invite a
+   list first, and the dot field fills only the remainder (~3.5in). */
+.celebration-page .cp-area {
+    flex: 1;
+    min-height: 0;
+    margin-top: 12px;
+    background-image: var(--dots);
+    background-size: 16px 16px;
+}
+
+.celebration-page .cp-bullets {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex-shrink: 0;
+}
+
+.celebration-page .cp-bullet {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.celebration-page .cp-bullet .cp-tick {
+    width: 13px;
+    height: 13px;
+    border: var(--lw-2) solid var(--ink);
+    border-radius: var(--wobble-s);
+    flex-shrink: 0;
+    transform: rotate(-2.4deg);
+}
+
+.celebration-page .cp-bullet:nth-child(2) .cp-tick { transform: rotate(1.8deg); }
+.celebration-page .cp-bullet:nth-child(3) .cp-tick { transform: rotate(-0.8deg); }
+
+.celebration-page .cp-bullet .cp-bline {
+    flex: 1;
+    border-bottom: var(--lw) solid var(--hairline);
+    height: 15px;
 }
 
 /* =====================
-   PDF EXPORT STYLES
+   PRINT
    ===================== */
 @media print {
     body {
         background: white;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
-
-    body::before {
-        display: none;
-    }
-
-    .controls {
-        display: none !important;
-    }
-
-    #preview-container {
-        padding: 0;
-    }
-
-    #planner-content {
-        gap: 0;
-    }
-
+    .controls { display: none !important; }
+    #preview-container { padding: 0; }
+    #planner-content { gap: 0; }
     .page {
         box-shadow: none;
         margin: 0;
@@ -1127,9 +1484,9 @@ body::before {
 .loading {
     text-align: center;
     padding: 60px;
-    color: var(--text-secondary);
-    font-family: var(--font-display);
-    font-style: italic;
+    color: var(--ink-soft);
+    font-family: var(--hand);
+    font-size: 22px;
 }
 
 .loading::after {

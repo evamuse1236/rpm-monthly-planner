@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Page harness</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body { background: #888; }
+        #preview-container { padding: 12px; }
+    </style>
+</head>
+<body>
+    <div id="preview-container"><div id="planner-content"></div></div>
+    <script src="script.js"></script>
+    <script>
+        // Render a single page type for screenshot review.
+        // ?p=title|calendar|weekly|daily|rpm|celebrate&m=7&y=2026&d=4
+        const q = new URLSearchParams(location.search);
+        const m = parseInt(q.get('m') || '7');
+        const y = parseInt(q.get('y') || '2026');
+        const d = parseInt(q.get('d') || '4');
+        const p = q.get('p') || 'title';
+
+        const weeks = getWeeksInMonth(y, m);
+        const week = weeks.find(w => w.some(x => x.day === d && x.isCurrentMonth)) || weeks[1];
+        const weekNum = weeks.indexOf(week) + 1;
+
+        const gen = {
+            title: () => generateTitlePage(m, y),
+            calendar: () => generateMonthlyCalendar(y, m),
+            weekly: () => generateWeeklyPlanner(weekNum, week, m, y),
+            daily: () => generateDailyPage(d, m, y),
+            rpm: () => generateRPMPage(d, m, y),
+            celebrate: () => generateCelebrationPage(d, m, y)
+        };
+
+        document.getElementById('planner-content').innerHTML = gen[p]();
+
+        // ?canvas=1 → replace the live page with its html2canvas render,
+        // so a screenshot shows exactly what the PDF export will contain.
+        if (q.has('canvas')) {
+            (async () => {
+                // Never fail silently: a screenshot of an un-rendered canvas
+                // looks exactly like the live page, which quietly turns
+                // "export verified" into a lie.
+                try {
+                    if (typeof html2canvas !== 'function') {
+                        throw new Error('html2canvas did not load (CDN blocked?)');
+                    }
+                    await document.fonts.ready;
+                    const page = document.querySelector('.page');
+                    const canvas = await html2canvas(page, {scale: 1, useCORS: true, width: page.offsetWidth, height: page.offsetHeight});
+                    canvas.style.cssText = 'display:block;box-shadow:0 2px 24px rgba(0,0,0,.2)';
+                    document.getElementById('planner-content').replaceChildren(canvas);
+                    document.title = 'canvas-ready';
+                } catch (err) {
+                    document.title = 'canvas-FAILED';
+                    const banner = document.createElement('pre');
+                    banner.style.cssText = 'background:#000;color:#fff;font:14px monospace;padding:16px;white-space:pre-wrap';
+                    banner.textContent = 'CANVAS RENDER FAILED\n' + (err && err.stack || err);
+                    document.getElementById('planner-content').prepend(banner);
+                }
+            })();
+        }
+    </script>
+</body>
+</html>

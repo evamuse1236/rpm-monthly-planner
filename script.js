@@ -112,6 +112,34 @@ function selectWeekdaysOnly() {
 // HELPER FUNCTIONS
 // =====================
 
+// Little hand-drawn pen doodles, inline SVG so they print crisply.
+//
+// Every shape here is deliberately IRREGULAR: no ray sits at an exact 45°,
+// no two petals share a radius, the star's points differ in length and the
+// heart leans. Perfectly symmetric icons are the single loudest tell that a
+// "handmade" planner was drawn by a machine, and at these sizes the wonk is
+// what the eye reads as a human hand.
+function doodle(name, cls = '') {
+    const art = {
+        // points at uneven radii and angles; one arm noticeably longer
+        star: '<path d="M12.3 2.9 L14.6 8.8 L20.4 9.2 L15.2 13.4 L17.4 19.9 L11.7 16.1 L6.9 20.1 L8.9 13.2 L3.9 9.1 L9.9 8.5 Z"/>',
+        // egg-ish centre, eight rays at uneven angles and lengths
+        sun: '<path d="M8.2 12.4 C8 9.7 9.8 7.7 12.3 7.8 C14.9 7.9 16.5 9.9 16.2 12.5 C15.9 14.8 14.1 16.3 11.8 16.2 C9.6 16.1 8.4 14.5 8.2 12.4 Z"/><path d="M12.2 2.5 V5.3 M11.7 19.2 L12 22.4 M2.7 11.5 L5.2 11.8 M19.5 12.3 L22.2 11.9 M4.7 4.5 L7 6.6 M17.2 17.7 L19.5 19.3 M19.7 4.7 L17.3 7 M6.5 17.3 L4.4 19.6"/>',
+        // four lobes, none matching
+        sparkle: '<path d="M12.4 3.6 C13.2 8.8 15.4 11.2 20.3 12.1 C15.1 13.1 12.9 15.4 11.8 20.4 C11.1 15.2 8.7 12.8 3.7 11.9 C9.1 11.1 11.4 8.7 12.4 3.6 Z"/>',
+        // lopsided, left lobe fuller than the right
+        heart: '<path d="M11.8 19.2 C5.9 14.3 3.8 10.6 5.4 7.7 C7.1 5.1 10.4 5.5 12.1 8.1 C13.9 5.8 17.2 5.2 18.6 8 C20 10.8 17.7 14.2 11.8 19.2 Z"/>',
+        coffee: '<path d="M4.9 9.2 C8.6 8.8 12.3 8.9 16.1 9.1 C16.3 11.2 16.2 13.3 15.9 15.4 C15.6 17.9 13.9 19.2 11.7 19.1 C9.2 19 7.4 18.6 6 16.9 C4.9 15.5 4.8 12.3 4.9 9.2 Z M16.2 10.6 C18.4 10.3 19.6 11.5 19.4 13.2 C19.2 14.9 18 15.6 16.1 15.4 M8.4 6.1 C9 5 8 4.3 8.6 3 M11.9 6.2 C12.5 5.1 11.4 4.4 12 3.1"/>',
+        arrow: '<path d="M3.8 16.4 C8.3 15.2 13.7 12.6 18.9 6.8 M18.9 6.8 L14.4 7.9 M18.9 6.8 L18.5 11.2"/>',
+        // five petals, all different sizes, centre off-axis
+        flower: '<circle cx="11.8" cy="12.2" r="2"/><path d="M11.6 3.2 C14.1 3.6 15 5.9 13.6 8.2 C12.9 9.4 11.4 9.9 10.2 9.2 C8.3 8.1 8.9 4.9 11.6 3.2 Z"/><path d="M19.9 8.4 C21.3 10.6 20.2 12.9 17.5 13.1 C16.1 13.2 15.1 12.1 15.4 10.8 C15.8 8.7 18.2 7.5 19.9 8.4 Z"/><path d="M17.2 18.9 C15.4 20.7 12.9 20.1 12.4 17.5 C12.2 16.3 13.1 15.3 14.4 15.4 C16.5 15.6 18 17.4 17.2 18.9 Z"/><path d="M7.4 17.9 C6.4 15.7 7.9 13.9 10.2 14.6 C11.4 15 11.9 16.3 11.2 17.4 C10.2 19.1 8.2 19.3 7.4 17.9 Z"/><path d="M4.3 9.6 C6.2 8.1 8.5 9.1 8.6 11.7 C8.7 13 7.6 13.9 6.4 13.5 C4.4 12.9 3.4 10.7 4.3 9.6 Z"/>',
+        bulb: '<path d="M11.6 3.4 C15.4 3.1 18.2 6.1 17.6 9.4 C17.2 11.6 15.6 12.6 15.1 13.9 C14.8 14.7 14.9 15.3 14.8 16 L10.2 15.9 C10.1 15.1 10.1 14.5 9.7 13.7 C9 12.4 7.2 11.3 7 9.1 C6.7 5.9 8.6 3.6 11.6 3.4 Z M10.1 18.7 L14.2 18.9 M10.7 21 L13.5 20.8"/>',
+        drop: '<path d="M12.1 3.7 C9.2 8.3 6.4 11.4 6.6 14.7 C6.8 18 9 20.1 12.2 20 C15.3 19.9 17.5 17.6 17.4 14.4 C17.3 11.3 14.9 8.2 12.1 3.7 Z"/>',
+        bolt: '<path d="M13.4 2.8 L5.8 13.7 L10.6 13.4 L9.7 21.2 L18.2 9.8 L13.2 10.2 Z"/>'
+    };
+    return `<svg class="doodle ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${art[name]}</svg>`;
+}
+
 function getMonthName(monthIndex) {
     const months = [
         'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
@@ -208,12 +236,46 @@ function getWeeksInMonth(year, month) {
 // PAGE GENERATORS
 // =====================
 
-function generateTitlePage() {
+function generateTitlePage(month, year) {
+    const monthName = getMonthName(month);
+    const monthNum = String(month + 1).padStart(2, '0');
+
+    // lowercase throughout — the calendar page says "august", so the title
+    // page shouldn't say "August"
+    const monthTitle = monthName.toLowerCase();
+
     return `
         <div class="page title-page">
-            <div class="illustration"></div>
-            <h1>MY RPM MONTHLY</h1>
-            <h2>JOURNAL</h2>
+            <div class="tp-eyebrow">my rapid planning month</div>
+            <div class="tp-numeral-wrap">
+                <span class="tp-swipe"></span>
+                <div class="tp-numeral">${monthNum}</div>
+            </div>
+            <div class="tp-rule"></div>
+            <h1 class="tp-month">${monthTitle}</h1>
+            <div class="tp-year">${year}</div>
+            <div class="tp-plan">
+                <div class="tp-plan-head">
+                    <span class="tp-plan-title">the month, in one block</span>
+                    <span class="tp-plan-step">r · p · map</span>
+                </div>
+                <div class="tp-field">
+                    <div class="tp-k">result — what do I want this month?</div>
+                    <div class="tp-line"></div>
+                </div>
+                <div class="tp-field">
+                    <div class="tp-k">purpose — why do I want it?</div>
+                    <div class="tp-line"></div>
+                </div>
+                <div class="tp-map">
+                    <div class="tp-k">massive action — how do I get there?</div>
+                    <div class="tp-action"><span class="tp-tick"></span></div>
+                    <div class="tp-action"><span class="tp-tick"></span></div>
+                    <div class="tp-action"><span class="tp-tick"></span></div>
+                    <div class="tp-action"><span class="tp-tick"></span></div>
+                    <div class="tp-action"><span class="tp-tick"></span></div>
+                </div>
+            </div>
         </div>
     `;
 }
@@ -221,9 +283,15 @@ function generateTitlePage() {
 function generateMonthlyCalendar(year, month) {
     const monthName = getMonthName(month);
     const weeks = getWeeksInMonth(year, month);
-    const dayNames = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+    const dayNames = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
     let calendarRows = '';
+
+    // hand-numbered tabs, one per week column, naming the weekly spread
+    // this column corresponds to
+    const weekTabs = weeks
+        .map((_, i) => `<div class="week-tab"><span>w${i + 1}</span></div>`)
+        .join('');
 
     dayNames.forEach((dayName, dayIndex) => {
         let cells = '';
@@ -237,15 +305,18 @@ function generateMonthlyCalendar(year, month) {
 
             cells += `
                 <div class="calendar-cell">
-                    <span class="date-number ${dateClass} ${otherMonthClass}">${dayInfo.day}</span>
+                    <span class="date-number ${otherMonthClass}">${String(dayInfo.day).padStart(2, '0')}</span>
                 </div>
             `;
         });
 
         const headerClass = dayIndex === 0 ? 'day-header sunday' : 'day-header';
+        // sun (top row) and sat (bottom row) get a light hatch band — the
+        // weekend cue used to be coral text, which vanishes in grayscale
+        const isWeekend = dayIndex === 0 || dayIndex === 6;
 
         calendarRows += `
-            <div class="calendar-row">
+            <div class="calendar-row ${isWeekend ? 'weekend' : ''}">
                 <div class="${headerClass}">${dayName}</div>
                 <div class="calendar-cells">${cells}</div>
             </div>
@@ -254,52 +325,86 @@ function generateMonthlyCalendar(year, month) {
 
     return `
         <div class="page monthly-calendar">
-            <div class="month-label">${monthName}</div>
+            <header class="ledger-head">
+                <div class="lh-left">
+                    <div class="lh-eyebrow">the month ahead</div>
+                    <div class="lh-title">${monthName.toLowerCase()} ${doodle('star', 'lh-doodle')}</div>
+                </div>
+                <div class="lh-right">
+                    <div class="lh-mono">${year}</div>
+                    <div class="lh-sub">my rpm planner</div>
+                </div>
+            </header>
+            <div class="rule-double"></div>
+            <div class="week-tabs">
+                <div class="wt-spacer"></div>
+                <div class="wt-cells">${weekTabs}</div>
+            </div>
             <div class="calendar-grid">
                 ${calendarRows}
             </div>
-            <div class="sidebar">
-                <span class="star">✦</span>
-                <span class="quote">One step at a time. You'll get there.</span>
-                <span class="footer-label">Monthly Planner</span>
+            <div class="page-foot">
+                <span class="pf-quote">one step at a time. you'll get there ${doodle('heart', 'pf-doodle')}</span>
+                <span class="pf-folio">${monthName.toLowerCase()} ${year}</span>
             </div>
         </div>
     `;
 }
 
-function generateWeeklyPlanner(weekNumber) {
-    // Generate weekly planner for week number in the month
+function generateWeeklyPlanner(weekNumber, week, month, year) {
+    // week is an array of 7 day objects (Sun..Sat) from getWeeksInMonth
+    const monthName = getMonthName(month);
+    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+    const dayLabel = (dayIndex) => {
+        const info = week[dayIndex];
+        const otherClass = info.isCurrentMonth ? '' : 'other-month';
+        return `
+            <div class="weekday-label">
+                <span class="wd-name">${dayNames[dayIndex]}</span>
+                <span class="wd-date ${otherClass}">${String(info.day).padStart(2, '0')}</span>
+            </div>
+        `;
+    };
+
+    let weekdayBoxes = '';
+    for (let d = 1; d <= 5; d++) {
+        weekdayBoxes += `
+            <div class="weekday-box">
+                ${dayLabel(d)}
+            </div>
+        `;
+    }
+
     return `
         <div class="page weekly-planner">
-            <div class="left-side">
-                <span class="floral">🌸</span>
-                <span class="vertical-label">W E E K L Y   P L A N N E R</span>
-            </div>
-            <div class="main-content">
-                <div class="weekday-box">
-                    <div class="weekday-label"><span>MONDAY</span></div>
-                    <div class="weekday-content"></div>
+            <header class="ledger-head">
+                <div class="lh-left">
+                    <div class="lh-eyebrow">weekly planner</div>
+                    <div class="lh-title">week ${weekNumber} ${doodle('coffee', 'lh-doodle')}</div>
                 </div>
-                <div class="weekday-box">
-                    <div class="weekday-label"><span>TUESDAY</span></div>
-                    <div class="weekday-content"></div>
+                <div class="lh-right">
+                    <div class="lh-mono">${year}</div>
+                    <div class="lh-sub">${monthName.toLowerCase()}</div>
                 </div>
-                <div class="weekday-box">
-                    <div class="weekday-label"><span>WEDNESDAY</span></div>
-                    <div class="weekday-content"></div>
+            </header>
+            <div class="rule-double"></div>
+            <div class="week-body">
+                <div class="weekday-col">
+                    ${weekdayBoxes}
                 </div>
-                <div class="weekday-box">
-                    <div class="weekday-label"><span>THURSDAY</span></div>
-                    <div class="weekday-content"></div>
-                </div>
-                <div class="weekday-box">
-                    <div class="weekday-label"><span>FRIDAY</span></div>
-                    <div class="weekday-content"></div>
+                <div class="weekend-col">
+                    <div class="weekend-day">
+                        ${dayLabel(6)}
+                    </div>
+                    <div class="weekend-day">
+                        ${dayLabel(0)}
+                    </div>
                 </div>
             </div>
-            <div class="weekend-strip">
-                <div class="weekend-day saturday"><span>SATURDAY</span></div>
-                <div class="weekend-day sunday"><span>SUNDAY</span></div>
+            <div class="page-foot">
+                <span class="pf-quote">where focus goes, energy flows ${doodle('arrow', 'pf-doodle')}</span>
+                <span class="pf-folio">week ${weekNumber} · ${monthName.toLowerCase()} ${year}</span>
             </div>
         </div>
     `;
@@ -308,62 +413,61 @@ function generateWeeklyPlanner(weekNumber) {
 function generateDailyPage(day, month, year) {
     const dateStr = formatDate(day, month, year);
     const dayOfWeek = new Date(year, month, day).getDay();
-    const dayName = getDayName(dayOfWeek);
 
-    // Generate time slots from 6:00 AM to 10:00 PM (hourly for more writing space)
+    // Hourly slots, 07:00–23:00, set as a 24-hour timetable
     let timeSlots = '';
-    const times = [
-        '6:00 AM', '7:00', '8:00', '9:00', '10:00', '11:00',
-        'NOON',
-        '1:00 PM', '2:00', '3:00', '4:00', '5:00', '6:00',
-        '7:00', '8:00', '9:00', '10:00'
-    ];
+    const highlightTimes = ['12:00', '18:00'];
 
-    const highlightTimes = ['NOON', '6:00'];
-
-    times.forEach(time => {
+    for (let h = 7; h <= 23; h++) {
+        const time = String(h).padStart(2, '0') + ':00';
         const isHighlight = highlightTimes.includes(time);
         timeSlots += `
             <div class="time-slot ${isHighlight ? 'highlight' : ''}">
                 <span class="time-label">${time}</span>
             </div>
         `;
-    });
+    }
+
+    const monthName = getMonthName(month);
+    const dayNum = String(day).padStart(2, '0');
+    const monthTitle = monthName.charAt(0) + monthName.slice(1).toLowerCase();
 
     return `
         <div class="page daily-page">
-            <div class="header">
-                <div class="date-section">
-                    <span class="date-label">DATE</span>
-                    <span class="date-value">${dateStr}</span>
+            <div class="dp-head">
+                <div class="lh-left">
+                    <div class="lh-eyebrow">today's plan</div>
+                    <div class="dp-date">${dayNum} ${monthTitle.toLowerCase()}</div>
                 </div>
-                <div class="five-steps">
-                    THE FIVE MASTER STEPS: 1. Capture Outcomes, Results, Actions, Projects, etc. 2. Create Your RPM Master Plan 3. Commit to Block Time 4. Schedule It 5. Complete, Measure and Celebrate
-                </div>
-                <div class="day-box">${dayName}</div>
+                <div class="dp-daybox">${getFullDayName(dayOfWeek).toLowerCase()}</div>
             </div>
-            <div class="main-content">
+            <div class="rule-double"></div>
+            <div class="dp-body">
                 <div class="schedule-section">
-                    <div class="section-header">
-                        <span class="section-icon">📋</span>
-                        <span class="section-title">COMMIT & SCHEDULE</span>
+                    <div class="sec-head">
+                        ${doodle('coffee', 'sec-doodle')}
+                        <span class="sec-title">commit &amp; schedule</span>
+                        <span class="sec-step">steps 3–4</span>
                     </div>
-                    <div class="section-subtitle">Commit to block time and schedule your musts</div>
+                    <div class="sec-sub">block time for your musts!</div>
                     <div class="schedule-box">
                         ${timeSlots}
                     </div>
                 </div>
                 <div class="capture-section">
-                    <div class="section-header">
-                        <span class="section-icon">💡</span>
-                        <span class="section-title">CAPTURE</span>
+                    <div class="sec-head">
+                        ${doodle('bulb', 'sec-doodle')}
+                        <span class="sec-title">capture</span>
+                        <span class="sec-step">step 1</span>
                     </div>
-                    <div class="section-subtitle">Ideas, Wants, Needs</div>
+                    <div class="sec-sub">ideas, wants, needs — get it all out</div>
                     <div class="capture-box"></div>
 
                     <div class="comms-section">
-                        <div class="comms-title">📞 Communications & Follow-ups</div>
-                        <div class="comms-line"></div>
+                        <div class="sec-head">
+                            ${doodle('arrow', 'sec-doodle')}
+                            <span class="sec-title">calls &amp; follow-ups</span>
+                        </div>
                         <div class="comms-line"></div>
                         <div class="comms-line"></div>
                         <div class="comms-line"></div>
@@ -372,11 +476,19 @@ function generateDailyPage(day, month, year) {
                     </div>
 
                     <div class="wellness-section">
-                        <div class="wellness-item">DID I HYDRATE? 🥤</div>
-                        <div class="wellness-item">DID I MOVE? 🏃</div>
-                        <div class="wellness-item">WHAT AM I GRATEFUL FOR? ☀️</div>
+                        <div class="wellness-item"><span class="checkbox"></span>did I hydrate? ${doodle('drop', 'wi-doodle')}</div>
+                        <div class="wellness-item"><span class="checkbox"></span>did I move? ${doodle('bolt', 'wi-doodle')}</div>
+                        <div class="wellness-item"><span class="checkbox"></span>what am I grateful for? ${doodle('heart', 'wi-doodle')}</div>
                     </div>
                 </div>
+            </div>
+            <div class="steps-foot">
+                <span class="sf-on"><span class="sf-num">1</span>capture</span>
+                <span><span class="sf-num">2</span>master plan</span>
+                <span class="sf-on"><span class="sf-num">3</span>commit</span>
+                <span class="sf-on"><span class="sf-num">4</span>schedule</span>
+                <span><span class="sf-num">5</span>celebrate</span>
+                <span>${dateStr}</span>
             </div>
         </div>
     `;
@@ -397,59 +509,71 @@ function generateRPMPage(day, month, year) {
         dayCircles += `<div class="day-circle ${isActive ? 'active' : ''}">${letter}</div>`;
     });
 
-    // Generate table rows to fill the page
+    // Single full-page table (restored at the user's request). Row count is
+    // tuned so the pitch matches the layout they approved; the page now
+    // carries a 0.5in bottom margin, so the same pitch buys slightly fewer
+    // rows than the original 30.
     let tableRows = '';
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 28; i++) {
         tableRows += `
-            <div class="table-row">
-                <div class="row-ldp">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                </div>
-                <div class="row-action"></div>
-                <div class="row-result"></div>
-                <div class="row-purpose"></div>
-            </div>
-        `;
+                    <div class="table-row">
+                        <div class="row-ldp">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                        <div class="row-action"></div>
+                        <div class="row-result"></div>
+                        <div class="row-purpose"></div>
+                    </div>`;
     }
 
     return `
         <div class="page rpm-page">
-            <div class="header">
-                <div class="day-circles">${dayCircles}</div>
-                <div class="date-section">
-                    <span>DATE</span> ${dateStr}
+            <header class="ledger-head">
+                <div class="lh-left">
+                    <div class="lh-eyebrow">step 2 · make it real</div>
+                    <div class="lh-title">master plan ${doodle('bolt', 'lh-doodle')}</div>
                 </div>
-                <div class="incantation">
-                    <span class="incantation-icon">📢</span>
-                    <span class="incantation-label">INCANTATION</span>
-                    <span class="incantation-line"></span>
+                <div class="lh-right">
+                    <div class="day-circles">${dayCircles}</div>
+                    <div class="rp-date"><span>date</span>${dateStr}</div>
                 </div>
+            </header>
+            <div class="rule-double"></div>
+            <div class="incantation">
+                <span class="incantation-label">today's incantation:</span>
+                <span class="incantation-line"></span>
             </div>
+            <div class="ldp-key">tick each action — <strong>L</strong> leverage / delegate it · <strong>D</strong> do it myself · <strong>P</strong> postpone it</div>
             <div class="table-container">
                 <div class="table-header">
                     <div class="col-ldp">
-                        <div><div>L</div></div>
-                        <div><div>D</div></div>
-                        <div><div>P</div></div>
+                        <div>L</div>
+                        <div>D</div>
+                        <div>P</div>
                     </div>
                     <div class="col-action">
-                        <div class="main-label">MASSIVE ACTION PLAN</div>
-                        <div class="sub-label">How can I best achieve it now?</div>
+                        <div class="main-label">massive action plan</div>
+                        <div class="sub-label">how can I best achieve it now?</div>
                     </div>
                     <div class="col-result">
-                        <div class="main-label">RESULT</div>
-                        <div class="sub-label">What do I want?</div>
+                        <div class="main-label">result</div>
+                        <div class="sub-label">what do I want?</div>
                     </div>
                     <div class="col-purpose">
-                        <div class="main-label">PURPOSE</div>
-                        <div class="sub-label">Why do I want it?</div>
+                        <div class="main-label">purpose</div>
+                        <div class="sub-label">why do I want it?</div>
                     </div>
                 </div>
+                <div class="table-rule"></div>
                 <div class="table-body">
                     ${tableRows}
                 </div>
+            </div>
+            <div class="page-foot">
+                <span class="pf-quote">a result is not a to-do list — know what you want, and why ${doodle('sparkle', 'pf-doodle')}</span>
+                <span class="pf-folio">master plan · ${dateStr}</span>
             </div>
         </div>
     `;
@@ -458,19 +582,47 @@ function generateRPMPage(day, month, year) {
 function generateCelebrationPage(day, month, year) {
     const dateStr = formatDate(day, month, year);
 
+    const prompt = (q) => `
+        <div class="cp-prompt">
+            <div class="cp-q">${q}</div>
+            ${'<div class="cp-line"></div>'.repeat(5)}
+        </div>
+    `;
+
+    // a few hand-drawn ticks so the wins field invites a list rather than
+    // presenting an intimidating open dot-field
+    const bullet = () => `
+            <div class="cp-bullet"><span class="cp-tick"></span><span class="cp-bline"></span></div>`;
+
     return `
         <div class="page celebration-page">
-            <div class="header">
-                <h2>STEP 5 - COMPLETE, MEASURE & CELEBRATE</h2>
-                <p>
-                    Remember: Progress = Happiness. Celebrate your wins, no matter how small.
-                    What did you accomplish today? Review your day. What did I learn today? What did I contribute to someone's life
-                    today? How can I improve and do even better tomorrow? Take time to reflect and celebrate your progress.
-                </p>
+            <header class="ledger-head">
+                <div class="lh-left">
+                    <div class="lh-eyebrow">step 5 · complete, measure &amp; celebrate</div>
+                    <div class="lh-title">reflect ${doodle('sparkle', 'lh-doodle')}${doodle('star', 'lh-doodle small')}</div>
+                </div>
+                <div class="lh-right">
+                    <div class="lh-mono">${dateStr}</div>
+                    <div class="lh-sub">progress = happiness</div>
+                </div>
+            </header>
+            <div class="rule-double"></div>
+            <div class="cp-prompts">
+                ${prompt('what did I accomplish today?')}
+                ${prompt('what did I learn today?')}
+                ${prompt('what did I contribute?')}
             </div>
-            <div class="content-area">
-                <div class="date-field">DATE: ${dateStr}</div>
-                <div class="watercolor-bg"></div>
+            <div class="cp-reflect">
+                <div class="cp-reflect-label">
+                    <span class="sec-title">celebrate your wins ${doodle('heart', 'wi-doodle')}</span>
+                    <span class="cp-motto">no matter how small!</span>
+                </div>
+                <div class="cp-bullets">${bullet().repeat(6)}</div>
+                <div class="cp-area"></div>
+            </div>
+            <div class="page-foot">
+                <span class="pf-quote">progress is the only thing that makes you happy ${doodle('sparkle', 'pf-doodle')}</span>
+                <span class="pf-folio">reflect · ${dateStr}</span>
             </div>
         </div>
     `;
@@ -493,7 +645,7 @@ function generatePlanner() {
         let html = '';
 
         // 1. Title Page
-        html += generateTitlePage();
+        html += generateTitlePage(month, year);
 
         // 2. Monthly Calendar
         html += generateMonthlyCalendar(year, month);
@@ -517,7 +669,7 @@ function generatePlanner() {
             // Only generate weekly planner if there are selected days in this week
             if (daysInThisWeek.length > 0) {
                 // Generate weekly planner for this week
-                html += generateWeeklyPlanner(weekIndex + 1, week);
+                html += generateWeeklyPlanner(weekIndex + 1, week, month, year);
                 
                 // Generate daily pages for selected days in this week (in order)
                 daysInThisWeek.sort((a, b) => a - b);
@@ -595,9 +747,28 @@ async function exportToPDF() {
     exportBtn.textContent = 'Exporting...';
     exportBtn.disabled = true;
 
+    const plannerContent = document.getElementById('planner-content');
+    let pages = [];
+    let previewIsParked = false;
+
+    const restorePlannerPages = () => {
+        if (!previewIsParked) return;
+
+        const restoredPages = document.createDocumentFragment();
+        pages.forEach(page => restoredPages.appendChild(page));
+        plannerContent.replaceChildren(restoredPages);
+        previewIsParked = false;
+    };
+
     try {
-        // Get all page elements
-        const pages = document.querySelectorAll('#planner-content .page');
+        // html2canvas clones and lays out the entire live document for every
+        // capture. Keeping a full month (roughly 100 pages) mounted here makes
+        // export approach quadratic work, so park the preview and mount only
+        // the page currently being rendered.
+        pages = Array.from(plannerContent.querySelectorAll('.page'));
+        const parkedPages = document.createDocumentFragment();
+        pages.forEach(page => parkedPages.appendChild(page));
+        previewIsParked = true;
         
         // Create jsPDF instance
         const { jsPDF } = window.jspdf;
@@ -610,24 +781,28 @@ async function exportToPDF() {
         // Process each page individually
         for (let i = 0; i < pages.length; i++) {
             const page = pages[i];
+            plannerContent.replaceChildren(page);
             
             // Update progress
             exportBtn.textContent = `Exporting ${i + 1}/${pages.length}...`;
 
             // Fix rotated text before rendering
             const fixedElements = fixRotatedTextForExport(page);
-            
-            // Render the page to canvas
-            const canvas = await html2canvas(page, {
-                scale: 2,
-                useCORS: true,
-                letterRendering: true,
-                width: page.offsetWidth,
-                height: page.offsetHeight
-            });
-            
-            // Restore original styles
-            restoreRotatedText(fixedElements);
+            let canvas;
+
+            try {
+                // Render the page to canvas while it is the only planner page
+                // mounted in the document.
+                canvas = await html2canvas(page, {
+                    scale: 2,
+                    useCORS: true,
+                    letterRendering: true,
+                    width: page.offsetWidth,
+                    height: page.offsetHeight
+                });
+            } finally {
+                restoreRotatedText(fixedElements);
+            }
 
             // Add new page if not the first
             if (i > 0) {
@@ -639,15 +814,17 @@ async function exportToPDF() {
             pdf.addImage(imgData, 'JPEG', 0, 0, 8.5, 11);
         }
 
+        restorePlannerPages();
+
         // Save the PDF
         pdf.save(`RPM_Monthly_${monthName}_${year}.pdf`);
-        
-        exportBtn.textContent = originalText;
-        exportBtn.disabled = false;
     } catch (err) {
         console.error('PDF export failed:', err);
+        alert('PDF export failed. Please try again.');
+    } finally {
+        // Restore the full preview in its original order on success or failure.
+        restorePlannerPages();
         exportBtn.textContent = originalText;
         exportBtn.disabled = false;
-        alert('PDF export failed. Please try again.');
     }
 }
