@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "rpm-planner",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8742", "--directory", "C:\\repos\\rpm-monthly-v2"],
+      "port": 8742
+    }
+  ]
+}
